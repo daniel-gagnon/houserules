@@ -8,3 +8,6 @@ pom.xml
 /.lein-*
 /.env
 *.log
+.idea/
+houserules.iml
+resources/public/js/
