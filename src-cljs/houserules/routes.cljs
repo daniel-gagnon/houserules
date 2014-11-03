@@ -1,6 +1,7 @@
 (ns houserules.routes
   (:require [reagent.core :as reagent :refer [atom]]
             [secretary.core :as secretary]
+            [goog.events :as events]
             [goog.history.EventType :as EventType])
   (:import goog.History)
   (:require-macros [secretary.core :refer [defroute]]))
@@ -8,7 +9,7 @@
 (def page (atom :home))
 
 (let [h (History.)]
-  (goog.events/listen h EventType/NAVIGATE #(secretary/dispatch! (.-token %)))
+  (events/listen h EventType/NAVIGATE #(secretary/dispatch! (.-token %)))
   (doto h (.setEnabled true)))
 
 (defroute "/" []
