@@ -11,3 +11,4 @@ pom.xml
 .idea/
 houserules.iml
 resources/public/js/
+.vagrant/
