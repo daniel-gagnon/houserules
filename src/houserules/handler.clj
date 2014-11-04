@@ -11,7 +11,8 @@
             [taoensso.timbre.appenders.rotor :as rotor]
             [selmer.parser :as parser]
             [environ.core :refer [env]]
-            [cronj.core :as cronj]))
+            [cronj.core :as cronj]
+            [houserules.routes.database.migrations :as migrations]))
 
 (defroutes base-routes
   (route/resources "/")
@@ -39,7 +40,10 @@
   ;;start the expired session cleanup job
   (cronj/start! session-manager/cleanup-job)
   (timbre/info "\n-=[ houserules started successfully"
-               (when (env :dev) "using the development profile") "]=-"))
+               (when (env :dev) "using the development profile") "]=-")
+
+
+  (migrations/migrate))
 
 (defn destroy
   "destroy will be called when your application
