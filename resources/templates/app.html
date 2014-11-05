@@ -1,9 +1,16 @@
 <html>
   <head>
       <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=Edge">
       <title>Welcome to houserules</title>
+      {% if dev %}
+        {% style "/semantic/css/semantic.css" %}
+      {% else %}
+        {% style "/semantic/css/semantic.min.css" %}
+      {% endif %}
   </head>
   <body id="app">
+    <script src="https://login.persona.org/include.js"></script>
     <script type="text/javascript">
         var context = "{{servlet-context}}";
     </script>
