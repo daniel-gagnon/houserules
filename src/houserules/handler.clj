@@ -12,7 +12,7 @@
             [selmer.parser :as parser]
             [environ.core :refer [env]]
             [cronj.core :as cronj]
-            [houserules.routes.database.migrations :as migrations]))
+            [houserules.database.migrations :as migrations]))
 
 (defroutes base-routes
   (route/resources "/")

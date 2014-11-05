@@ -15,6 +15,7 @@ sed -i /etc/rethinkdb/instances.d/instance1.conf -e 's/# bind=127.0.0.1/bind=all
 SCRIPT
 
 $lein = <<SCRIPT
+apt-get -y install default-jre-headless
 mkdir /home/vagrant/bin
 wget -qO /home/vagrant/bin/lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
 chmod a+x /home/vagrant/bin/lein

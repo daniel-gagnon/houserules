@@ -1,4 +1,4 @@
-(ns houserules.routes.database.migrations
+(ns houserules.database.migrations
   (:require [houserules.database :refer [with-db conn]]
             [bitemyapp.revise.query :as r]
             [bitemyapp.revise.core :refer [run run-async]]))
