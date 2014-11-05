@@ -10,6 +10,16 @@
       {% endif %}
   </head>
   <body id="app">
+  {% if dev %}
+  <div class="ui error message">
+      <div class="header">
+          Clojurescript code is not compiled
+      </div>
+      <p>
+          Run <code>lein with-profile dev cljsbuild auto</code>
+      </p>
+  </div>
+  {% endif %}
     <script src="https://login.persona.org/include.js"></script>
     <script type="text/javascript">
         var context = "{{servlet-context}}";
