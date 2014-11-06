@@ -1,6 +1,7 @@
 (ns houserules.handler
   (:require [compojure.core :refer [defroutes]]
             [houserules.routes.home :refer [home-routes]]
+            [houserules.routes.auth :refer [auth-routes]]
             [houserules.middleware :refer [load-middleware]]
             [houserules.session-manager :as session-manager]
             [noir.response :refer [redirect]]
@@ -63,7 +64,7 @@
 
 (def app (app-handler
            ;; add your application routes here
-           [home-routes base-routes]
+           [home-routes auth-routes base-routes]
            ;; add custom middleware here
            :middleware (load-middleware)
            :ring-defaults (mk-defaults false)

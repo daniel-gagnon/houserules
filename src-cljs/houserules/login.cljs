@@ -1,5 +1,6 @@
 (ns houserules.login
-  (:require [ajax.core :refer [POST]]))
+  (:require [reagent.core :as reagent :refer [atom]]
+            [ajax.core :refer [POST]]))
 
 (def ^:private logged-in (atom false))
 

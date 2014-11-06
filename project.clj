@@ -21,7 +21,8 @@
    [environ "1.0.0"]
    [ring-server "0.3.1"]
    [secretary "1.2.1"]
-   [im.chit/cronj "1.4.3"]]
+   [im.chit/cronj "1.4.3"]
+   [org.clojure/data.json "0.2.5"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts
