@@ -22,11 +22,13 @@
    [ring-server "0.3.1"]
    [secretary "1.2.1"]
    [im.chit/cronj "1.4.3"]
-   [org.clojure/data.json "0.2.5"]]
+   [org.clojure/data.json "0.2.5"]
+   [com.sleepycat/je "6.2.7"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts
   ["-server"]
+  :repositories [["Oracle" "http://download.oracle.com/maven/"]]
   :plugins
   [[lein-ring "0.8.13"]
    [lein-environ "1.0.0"]
