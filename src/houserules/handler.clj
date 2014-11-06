@@ -3,7 +3,6 @@
             [houserules.routes.home :refer [home-routes]]
             [houserules.routes.auth :refer [auth-routes]]
             [houserules.middleware :refer [load-middleware]]
-            [houserules.session-manager :as session-manager]
             [noir.response :refer [redirect]]
             [noir.util.middleware :refer [app-handler]]
             [ring.middleware.defaults :refer [site-defaults]]
@@ -12,7 +11,8 @@
             [taoensso.timbre.appenders.rotor :as rotor]
             [selmer.parser :as parser]
             [environ.core :refer [env]]
-            [cronj.core :as cronj]))
+            [cronj.core :as cronj]
+            [ring.middleware.session.cookie :refer [cookie-store]]))
 
 (defroutes base-routes
   (route/resources "/")
@@ -38,7 +38,6 @@
 
   (if (env :dev) (parser/cache-off!))
   ;;start the expired session cleanup job
-  (cronj/start! session-manager/cleanup-job)
   (timbre/info "\n-=[ houserules started successfully"
                (when (env :dev) "using the development profile") "]=-"))
 
@@ -47,7 +46,6 @@
    shuts down, put any clean up code here"
   []
   (timbre/info "houserules is shutting down...")
-  (cronj/shutdown! session-manager/cleanup-job)
   (timbre/info "shutdown complete!"))
 
 ;; timeout sessions after 30 minutes
@@ -65,6 +63,8 @@
 (def app (app-handler
            ;; add your application routes here
            [home-routes auth-routes base-routes]
+           :session-options {:cookie-name "houserules-session"
+                             :store (cookie-store)}
            ;; add custom middleware here
            :middleware (load-middleware)
            :ring-defaults (mk-defaults false)

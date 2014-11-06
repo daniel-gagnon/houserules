@@ -1,6 +1,7 @@
 (ns houserules.auth
   (:require [org.httpkit.client :as http]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [noir.session :as session]))
 
 (defn verify-assertion [assertion]
   (let [{:keys [status email]}
@@ -8,4 +9,7 @@
             deref
             :body
             (json/read-str :key-fn keyword))]
-    (when (= status "okay") email)))
+    (when (= status "okay")
+      (session/clear!)
+      (session/put! :email email)
+      email)))
