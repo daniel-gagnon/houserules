@@ -1,19 +1,10 @@
 (ns houserules.routes.home
             (:require [houserules.layout :as layout]
-                      [houserules.util :as util]
-                      [compojure.core :refer :all]
-                      [noir.response :refer [edn]]
-                      [clojure.pprint :refer [pprint]]))
+                      [compojure.core :refer :all]))
 
 (defn home-page []
       (layout/render
-        "app.html" {:docs (util/md->html "/md/docs.md")}))
-
-(defn save-document [doc]
-      (pprint doc)
-      {:status "ok"})
+        "app.html"))
 
 (defroutes home-routes
-  (GET "/" [] (home-page))
-  (POST "/save" {:keys [body-params]}
-    (edn (save-document body-params))))
+  (GET "/" [] (home-page)))
