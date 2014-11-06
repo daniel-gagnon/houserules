@@ -21,8 +21,7 @@
    [environ "1.0.0"]
    [ring-server "0.3.1"]
    [secretary "1.2.1"]
-   [im.chit/cronj "1.4.3"]
-   [revise "0.0.6"]]
+   [im.chit/cronj "1.4.3"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts
