@@ -13,3 +13,7 @@
       (session/clear!)
       (session/put! :email email)
       email)))
+
+(defn logout [] (session/clear!))
+
+(defn whoami [] (session/get :email))
