@@ -1,6 +1,6 @@
 (ns houserules.login
   (:require [reagent.core :as reagent :refer [atom]]
-            [ajax.core :refer [POST]]))
+            [ajax.core :refer [GET POST]]))
 
 (def ^:private logged-in (atom false))
 
@@ -17,4 +17,8 @@
         {:handler #(reset! logged-in false)
          :error-handler #(do (js/alert "Logout eror") (.log js/console %))}))
 
-(.watch (.-id js/navigator) (js-obj "onlogin" on-login, "onlogout" on-logout))
+(GET "/auth/whoami"
+     :handler
+     (fn [{:keys [logged email]}]
+       (.watch (.-id js/navigator) (js-obj "loggedInUser" (if logged email nil), "onlogin" on-login, "onlogout" on-logout))))
+

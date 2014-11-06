@@ -9,6 +9,6 @@
   (POST "/auth/logout" []
         (logout)
         {:body {:logged false :email nil}})
-  (POST "/auth/whoami" []
+  (GET "/auth/whoami" []
         (let [email (whoami)]
           {:body {:logged (boolean email) :email email}})))
