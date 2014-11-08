@@ -51,7 +51,7 @@
                keyword)))))
      {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
 
-(defn get
+(defn db-get
   ([key] (assert *database*) (get key *database*))
   ([key database] (assert *transaction*)
    (let [tmp-entry (DatabaseEntry.)]
