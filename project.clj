@@ -53,7 +53,8 @@
     :aot :all},
    :production
    {:ring
-    {:open-browser? false, :stacktraces? false, :auto-reload? false}},
+    {:open-browser? false, :stacktraces? false, :auto-reload? false}
+    :global-vars {*assert* false}},
    :dev
    {:cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]}}},
     :dependencies

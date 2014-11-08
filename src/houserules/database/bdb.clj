@@ -7,6 +7,7 @@
 (.addShutdownHook (Runtime/getRuntime) (Thread. #(reset! shutting-down true)))
 
 (def ^:private ^:dynamic *transaction* nil)
+(def ^:private ^:dynamic *database* nil)
 
 (def ^:private environment
   (delay
@@ -35,12 +36,20 @@
 (defn abort [trx]
   (.abort trx))
 
+(defn put
+  ([key value] (assert *database*) (put key value *database*))
+  ([key value database] (assert *transaction*)))
+
 (defmacro with-transaction [& body]
   "Wraps in a transaction, adds a commit at the end if no commit is present"
   `(when (or *transaction* (not @shutting-down))
      (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
        ~@body
        ~@(when (not (some #{commit} (flatten body))) [commit]))))
+
+(defmacro with-database [db & bodies]
+  `(binding [*database* (db @databases)]
+     ~@bodies))
 
 (.addShutdownHook
   (Runtime/getRuntime)
