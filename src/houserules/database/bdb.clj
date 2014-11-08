@@ -1,6 +1,6 @@
 (ns houserules.database.bdb
   (:require [taoensso.nippy :as nippy])
-  (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats]
+  (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode]
            [java.io File]))
 
 (def ^:private shutting-down (atom false))
@@ -36,9 +36,27 @@
 (defn abort [trx]
   (.abort trx))
 
-(defn put
-  ([key value] (assert *database*) (put key value *database*))
-  ([key value database] (assert *transaction*)))
+(dorun (map
+   (fn [[function method]]
+     (eval
+       `(defn ~function
+          ([key# value#]
+           (assert *database*)
+           (~function key# value# *database*))
+          ([key# value# database#]
+           (assert *transaction*)
+           (-> (~method database# *transaction* (clj->entry key) (clj->entry value#))
+               .name
+               .toLowerCase
+               keyword)))))
+     {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
+
+(defn get
+  ([key] (assert *database*) (get key *database*))
+  ([key database] (assert *transaction*)
+   (let [tmp-entry (DatabaseEntry.)]
+     (.get database *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT)
+     (entry->clj tmp-entry))))
 
 (defmacro with-transaction [& body]
   "Wraps in a transaction, adds a commit at the end if no commit is present"
