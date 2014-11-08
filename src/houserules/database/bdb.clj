@@ -1,5 +1,6 @@
 (ns houserules.database.bdb
-  (:require [taoensso.nippy :as nippy])
+  (:require [taoensso.nippy :as nippy]
+            [slingshot.slingshot :refer [throw+]])
   (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode]
            [java.io File]))
 
@@ -36,27 +37,40 @@
 (defn abort [trx]
   (.abort trx))
 
+(defn enum->keyword [enum]
+  (keyword (.toLowerCase (.name enum))))
+
 (dorun (map
    (fn [[function method]]
      (eval
        `(defn ~function
           ([key# value#]
-           (assert *database*)
            (~function key# value# *database*))
           ([key# value# database#]
+           (assert (database# databases))
            (assert *transaction*)
-           (-> (~method database# *transaction* (clj->entry key) (clj->entry value#))
-               .name
-               .toLowerCase
-               keyword)))))
+           (let [result# (enum->keyword (~method (database# databases) *transaction* (clj->entry key) (clj->entry value#)))]
+             (if (= result# :success)
+               :success
+               (throw+ {:error result#
+                        :database database#
+                        :key key#
+                        :value value#})))))))
      {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
 
 (defn db-get
-  ([key] (assert *database*) (get key *database*))
-  ([key database] (assert *transaction*)
-   (let [tmp-entry (DatabaseEntry.)]
-     (.get database *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT)
-     (entry->clj tmp-entry))))
+  ([key] (db-get key *database*))
+  ([key database]
+   (assert (database databases))
+   (assert *transaction*)
+   (let [tmp-entry (DatabaseEntry.)
+         result (enum->keyword (.get (database databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
+     (if (= result :success)
+       (entry->clj tmp-entry)
+       (throw+
+         {:error result
+          :database database
+          :key key})))))
 
 (defmacro with-transaction [& body]
   "Wraps in a transaction, adds a commit at the end if no commit is present"
@@ -66,8 +80,10 @@
        ~@(when (not (some #{commit} (flatten body))) [commit]))))
 
 (defmacro with-database [db & bodies]
-  `(binding [*database* (db @databases)]
-     ~@bodies))
+  `(do
+     (assert (db databases))
+     (binding [*database* db]
+       ~@bodies)))
 
 (.addShutdownHook
   (Runtime/getRuntime)
