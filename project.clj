@@ -8,7 +8,6 @@
   :dependencies
   [[reagent-forms "0.2.4"]
    [com.taoensso/tower "3.0.2"]
-   [markdown-clj "0.9.55" :exclusions [com.keminglabs/cljx]]
    [http-kit "2.1.19"]
    [prone "0.6.0"]
    [noir-exception "0.2.2"]
