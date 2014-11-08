@@ -12,7 +12,8 @@
             [selmer.parser :as parser]
             [environ.core :refer [env]]
             [cronj.core :as cronj]
-            [ring.middleware.session.cookie :refer [cookie-store]]))
+            [ring.middleware.session.cookie :refer [cookie-store]]
+            [houserules.database.bdb :refer [shutdown-database]]))
 
 (defroutes base-routes
   (route/resources "/")
@@ -46,6 +47,9 @@
    shuts down, put any clean up code here"
   []
   (timbre/info "houserules is shutting down...")
+
+  (shutdown-database)
+
   (timbre/info "shutdown complete!"))
 
 ;; timeout sessions after 30 minutes

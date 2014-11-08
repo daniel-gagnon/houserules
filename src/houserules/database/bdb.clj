@@ -1,11 +1,22 @@
 (ns houserules.database.bdb
   (:require [taoensso.nippy :as nippy]
-            [slingshot.slingshot :refer [throw+]])
+            [slingshot.slingshot :refer [try+ throw+]])
   (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode]
-           [java.io File]))
+           [java.io File]
+           [java.util.concurrent.locks Lock ReentrantReadWriteLock]))
+
+; The write lock is acquired and never released when the database is shutting down
+; to prevent more transactions going in
+(let [rwlock (ReentrantReadWriteLock.)]
+  (defmacro try-read-lock [& bodies]
+    (when (.tryLock (.readLock rwlock))
+      (try+
+        ~@bodies
+        (finally (.unlock (.readLock rwlock))))))
+  (defn jam-lock []
+    (.lock (.writeLock rwlock))))
 
 (def ^:private shutting-down (atom false))
-(.addShutdownHook (Runtime/getRuntime) (Thread. #(reset! shutting-down true)))
 
 (def ^:private ^:dynamic *transaction* nil)
 (def ^:private ^:dynamic *database* nil)
@@ -21,7 +32,7 @@
 (def ^:private databases
   (delay
     (->> (.getDatabaseNames @environment)
-         (map #(list (keyword %) (.openDatabase @environment nil % (.. (DatabaseConfig.) (setAllowCreate true) (setTransactional true)))))
+         (map #(list (keyword %) (.openDatabase @environment nil % (.. (DatabaseConfig.) (setAllowCreate false) (setTransactional true)))))
          flatten
          (apply hash-map))))
 
@@ -73,8 +84,7 @@
           :key key})))))
 
 (defmacro with-transaction [& body]
-  "Wraps in a transaction, adds a commit at the end if no commit is present"
-  `(when (or *transaction* (not @shutting-down))
+  `(try-read-lock
      (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
        ~@body
        ~@(when (not (some #{commit} (flatten body))) [commit]))))
@@ -85,10 +95,9 @@
      (binding [*database* db]
        ~@bodies)))
 
-(.addShutdownHook
-  (Runtime/getRuntime)
-  (Thread.
-    #(when (realized? environment)
-      (while (or (not @shutting-down) (pos? (.getNActive (.getTransactionStats @databases)))) (Thread/yield))
-      (dorun
-        (map (memfn close) (vals @databases))))))
+(defn shutdown-database []
+  (jam-lock)
+  (when (realized? environment)
+    (while (or (not @shutting-down) (pos? (.getNActive (.getTransactionStats @databases)))) (Thread/yield))
+    (dorun
+      (map #(.close %) (vals @databases)))))
