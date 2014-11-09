@@ -97,4 +97,5 @@
   (when (realized? environment)
     (jam-lock)
     (while (pos? (.getNActive (.getTransactionStats @environment))) (Thread/yield))
-    (dorun (map #(.close %) (vals @databases)))))
+    (dorun (map #(.close %) (vals @databases)))
+    (.close @environment)))
