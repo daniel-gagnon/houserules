@@ -1,20 +1,24 @@
 (ns houserules.database.bdb
   (:require [taoensso.nippy :as nippy]
             [slingshot.slingshot :refer [try+ throw+]])
-  (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode]
+  (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode Cursor OperationStatus StatsConfig Transaction$State]
            [java.io File]
-           [java.util.concurrent.locks Lock ReentrantReadWriteLock]))
+           [java.util.concurrent.locks Lock ReentrantReadWriteLock]
+           [clojure.lang MapEntry]))
 
 ; The write lock is acquired and never released when the database is shutting down
 ; to prevent more transactions going in
-(let [rwlock (ReentrantReadWriteLock.)]
-  (defmacro try-read-lock [& bodies]
-    (when (.tryLock (.readLock rwlock))
-      (try+
-        ~@bodies
-        (finally (.unlock (.readLock rwlock))))))
-  (defn jam-lock []
-    (.lock (.writeLock rwlock))))
+
+(def ^:private rwlock (ReentrantReadWriteLock.))
+
+(defmacro try-read-lock [& bodies]
+  `(when (.tryLock (.readLock rwlock))
+     (try+
+       ~@bodies
+       (finally (.unlock (.readLock rwlock))))))
+
+(defn jam-lock []
+  (.lock (.writeLock rwlock)))
 
 (def ^:private ^:dynamic *transaction* nil)
 (def ^:private ^:dynamic *database* nil)
@@ -27,12 +31,15 @@
         db-folder
         (.. (EnvironmentConfig.) (setAllowCreate true) (setTransactional true))))))
 
-(def ^:private databases
-  (delay
-    (->> (.getDatabaseNames @environment)
-         (map #(list (keyword %) (.openDatabase @environment nil % (.. (DatabaseConfig.) (setAllowCreate false) (setTransactional true)))))
-         flatten
-         (apply hash-map))))
+(def ^:private databases (atom {}))
+
+(defn- open-database [name]
+  (let [kw-name (keyword name)]
+    (or
+      (kw-name @databases)
+      (let [db (.openDatabase @environment *transaction* name (.. (DatabaseConfig.) (setAllowCreate true) (setTransactional true)))]
+        (swap! databases assoc kw-name db)
+        db))))
 
 (defn clj->entry [data]
   (DatabaseEntry. (nippy/freeze data)))
@@ -40,11 +47,11 @@
 (defn entry->clj [entry]
   (nippy/thaw (.getData entry)))
 
-(defn commit [trx]
-  (.commit trx))
+(defn commit []
+  (.commit *transaction*))
 
-(defn abort [trx]
-  (.abort trx))
+(defn abort []
+  (.abort *transaction*))
 
 (defn enum->keyword [enum]
   (keyword (.toLowerCase (.name enum))))
@@ -81,11 +88,29 @@
           :database database
           :key key})))))
 
-(defmacro with-transaction [& body]
+(defn db-seq
+  ([] (db-seq *database*))
+  ([database]
+   (assert database)
+   (let [cursor (.openCursor (database databases) *transaction* nil)]
+     (take-while
+       identity
+       (repeatedly
+         (fn []
+           (let [k (DatabaseEntry.)
+                 v (DatabaseEntry.)
+                 result (.getNext cursor k v LockMode/DEFAULT)]
+             (if (= result OperationStatus/SUCCESS)
+               (MapEntry. (entry->clj k) (entry->clj v))
+               (do (.close cursor) nil)))))))))
+
+(defmacro with-transaction [& bodies]
   `(try-read-lock
      (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
-       ~@body
-       ~@(when (not (some #{commit} (flatten body))) [commit]))))
+       (try+
+         ~@bodies
+         (catch Object o# (do (when (= (.getState *transaction*) Transaction$State/OPEN) (abort)) (throw+ o#)))
+         (finally (do (when (= (.getState *transaction*) Transaction$State/OPEN) (commit))))))))
 
 (defmacro with-database [db & bodies]
   `(do
@@ -96,6 +121,10 @@
 (defn shutdown-database []
   (when (realized? environment)
     (jam-lock)
-    (while (pos? (.getNActive (.getTransactionStats @environment))) (Thread/yield))
+    (while (pos? (.getNActive (.getTransactionStats @environment StatsConfig/DEFAULT))) (Thread/yield))
     (dorun (map #(.close %) (vals @databases)))
     (.close @environment)))
+
+(defn migrate []
+  (with-transaction
+    (open-database "migrations")))

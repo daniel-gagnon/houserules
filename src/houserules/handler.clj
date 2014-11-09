@@ -13,7 +13,7 @@
             [environ.core :refer [env]]
             [cronj.core :as cronj]
             [ring.middleware.session.cookie :refer [cookie-store]]
-            [houserules.database.bdb :refer [shutdown-database]]))
+            [houserules.database.bdb :refer [migrate shutdown-database]]))
 
 (defroutes base-routes
   (route/resources "/")
@@ -38,7 +38,9 @@
     {:path "houserules.log" :max-size (* 512 1024) :backlog 10})
 
   (if (env :dev) (parser/cache-off!))
-  ;;start the expired session cleanup job
+
+  (migrate)
+
   (timbre/info "\n-=[ houserules started successfully"
                (when (env :dev) "using the development profile") "]=-"))
 
