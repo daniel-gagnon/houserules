@@ -16,8 +16,6 @@
   (defn jam-lock []
     (.lock (.writeLock rwlock))))
 
-(def ^:private shutting-down (atom false))
-
 (def ^:private ^:dynamic *transaction* nil)
 (def ^:private ^:dynamic *database* nil)
 
@@ -96,8 +94,7 @@
        ~@bodies)))
 
 (defn shutdown-database []
-  (jam-lock)
   (when (realized? environment)
-    (while (or (not @shutting-down) (pos? (.getNActive (.getTransactionStats @databases)))) (Thread/yield))
-    (dorun
-      (map #(.close %) (vals @databases)))))
+    (jam-lock)
+    (while (pos? (.getNActive (.getTransactionStats @environment))) (Thread/yield))
+    (dorun (map #(.close %) (vals @databases)))))
