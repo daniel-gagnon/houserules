@@ -12,3 +12,4 @@ pom.xml
 houserules.iml
 resources/public/js/
 .vagrant/
+database/
