@@ -1,15 +1,22 @@
 (ns houserules.database.bdb
   (:require [taoensso.nippy :as nippy]
-            [slingshot.slingshot :refer [try+ throw+]])
+            [slingshot.slingshot :refer [try+ throw+]]
+            [clojure.core.typed :refer [cf ann U Any tc-ignore non-nil-return check-ns Kw Map Atom1]])
   (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode Cursor OperationStatus StatsConfig Transaction$State]
            [java.io File]
-           [java.util.concurrent.locks Lock ReentrantReadWriteLock]
+           [java.util.concurrent.locks Lock ReentrantReadWriteLock ReentrantReadWriteLock$WriteLock]
            [clojure.lang MapEntry]))
 
 ; The write lock is acquired and never released when the database is shutting down
 ; to prevent more transactions going in
 
-(def ^:private rwlock (ReentrantReadWriteLock.))
+(def ^:private ^ReentrantReadWriteLock rwlock (ReentrantReadWriteLock.))
+
+(ann *transaction* (U Transaction nil))
+(def ^:private ^:dynamic *transaction* nil)
+
+(ann *database* (U Kw nil))
+(def ^:private ^:dynamic *database* nil)
 
 (defmacro try-read-lock [& bodies]
   `(when (.tryLock (.readLock rwlock))
@@ -17,11 +24,9 @@
        ~@bodies
        (finally (.unlock (.readLock rwlock))))))
 
+(non-nil-return java.util.concurrent.locks.ReentrantReadWriteLock/writeLock :all)
 (defn jam-lock []
   (.lock (.writeLock rwlock)))
-
-(def ^:private ^:dynamic *transaction* nil)
-(def ^:private ^:dynamic *database* nil)
 
 (def ^:private environment
   (delay
@@ -29,106 +34,112 @@
       (.mkdir db-folder)
       (Environment.
         db-folder
-        (.. (EnvironmentConfig.) (setAllowCreate true) (setTransactional true))))))
+        (doto (EnvironmentConfig.) (.setAllowCreate true) (.setTransactional true))))))
 
+(ann databases (Atom1 (Map Kw Database)))
 (def ^:private databases (atom {}))
 
+(ann open-database [String -> Database])
 (defn- open-database [name]
   (let [kw-name (keyword name)]
     (or
       (kw-name @databases)
-      (let [db (.openDatabase @environment *transaction* name (.. (DatabaseConfig.) (setAllowCreate true) (setTransactional true)))]
+      (let [db (.openDatabase @environment *transaction* name (doto (DatabaseConfig.) (.setAllowCreate true) (.setTransactional true)))]
         (swap! databases assoc kw-name db)
         db))))
 
-(defn clj->entry [data]
-  (DatabaseEntry. (nippy/freeze data)))
 
-(defn entry->clj [entry]
-  (nippy/thaw (.getData entry)))
+(tc-ignore
+  (ann clj->entry [Any -> DatabaseEntry])
+  (defn clj->entry [data]
+    (DatabaseEntry. (nippy/freeze data)))
 
-(defn commit []
-  (.commit *transaction*))
+  (defn entry->clj [entry]
+    (nippy/thaw (.getData entry)))
 
-(defn abort []
-  (.abort *transaction*))
+  (defn commit []
+    (.commit *transaction*))
 
-(defn enum->keyword [enum]
-  (keyword (.toLowerCase (.name enum))))
+  (defn abort []
+    (.abort *transaction*))
 
-(dorun (map
-   (fn [[function method]]
-     (eval
-       `(defn ~function
-          ([key# value#]
-           (~function *database* key# value#))
-          ([database# key# value#]
-           (assert (database# @databases))
-           (assert *transaction*)
-           (let [result# (enum->keyword (~method (database# databases) *transaction* (clj->entry key) (clj->entry value#)))]
-             (if (= result# :success)
-               :success
-               (throw+ {:error result#
-                        :database database#
-                        :key key#
-                        :value value#})))))))
-     {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
+  (defn enum->keyword [enum]
+    (keyword (.toLowerCase (.name enum))))
 
-(defn db-get
-  ([key] (db-get *database* key))
-  ([database key]
-   (assert (database @databases))
-   (assert *transaction*)
-   (let [tmp-entry (DatabaseEntry.)
-         result (enum->keyword (.get (database databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
-     (if (= result :success)
-       (entry->clj tmp-entry)
-       (throw+
-         {:error result
-          :database database
-          :key key})))))
+  (dorun (map
+           (fn [[function method]]
+             (eval
+               `(defn ~function
+                  ([key# value#]
+                   (~function *database* key# value#))
+                  ([database# key# value#]
+                   (assert (database# @databases))
+                   (assert *transaction*)
+                   (let [result# (enum->keyword (~method (database# databases) *transaction* (clj->entry key) (clj->entry value#)))]
+                     (if (= result# :success)
+                       :success
+                       (throw+ {:error result#
+                                :database database#
+                                :key key#
+                                :value value#})))))))
+           {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
 
-(defn db-seq
-  ([] (db-seq *database*))
-  ([database]
-   (assert database)
-   (let [cursor (.openCursor (database databases) *transaction* nil)]
-     (take-while
-       identity
-       (repeatedly
-         (fn []
-           (let [k (DatabaseEntry.)
-                 v (DatabaseEntry.)
-                 result (.getNext cursor k v LockMode/DEFAULT)]
-             (if (= result OperationStatus/SUCCESS)
-               (MapEntry. (entry->clj k) (entry->clj v))
-               (do (.close cursor) nil)))))))))
+  (defn db-get
+    ([key] (db-get *database* key))
+    ([database key]
+     (assert (database @databases))
+     (assert *transaction*)
+     (let [tmp-entry (DatabaseEntry.)
+           result (enum->keyword (.get (database databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
+       (if (= result :success)
+         (entry->clj tmp-entry)
+         (throw+
+           {:error result
+            :database database
+            :key key})))))
 
-(defmacro with-transaction [& bodies]
-  `(try-read-lock
-     (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
-       (try+
-         ~@bodies
-         (catch Object o# (do (when (= (.getState *transaction*) Transaction$State/OPEN) (abort)) (throw+ o#)))
-         (finally (do (when (= (.getState *transaction*) Transaction$State/OPEN) (commit))))))))
+  (defn db-seq
+    ([] (db-seq *database*))
+    ([database]
+     (assert database)
+     (let [cursor (.openCursor (database databases) *transaction* nil)]
+       (take-while
+         identity
+         (repeatedly
+           (fn []
+             (let [k (DatabaseEntry.)
+                   v (DatabaseEntry.)
+                   result (.getNext cursor k v LockMode/DEFAULT)]
+               (if (= result OperationStatus/SUCCESS)
+                 (MapEntry. (entry->clj k) (entry->clj v))
+                 (do (.close cursor) nil)))))))))
 
-(defmacro with-database [db & bodies]
-  `(do
-     (assert (~db @databases))
-     (binding [*database* ~db]
-       ~@bodies)))
+  (defmacro with-transaction [& bodies]
+    `(try-read-lock
+       (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
+         (try+
+           ~@bodies
+           (catch Object o# (do (when (= (.getState *transaction*) Transaction$State/OPEN) (abort)) (throw+ o#)))
+           (finally (do (when (= (.getState *transaction*) Transaction$State/OPEN) (commit))))))))
 
-(defn shutdown-database []
-  (when (realized? environment)
-    (jam-lock)
-    (while (pos? (.getNActive (.getTransactionStats @environment StatsConfig/DEFAULT))) (Thread/yield))
-    (dorun (map #(.close %) (vals @databases)))
-    (.close @environment)))
+  (defmacro with-database [db & bodies]
+    `(do
+       (assert (~db @databases))
+       (binding [*database* ~db]
+         ~@bodies)))
 
-(def ^:private migrations
-  [#(open-database "users")])
+  (defn shutdown-database []
+    (when (realized? environment)
+      (jam-lock)
+      (while (pos? (.getNActive (.getTransactionStats @environment StatsConfig/DEFAULT))) (Thread/yield))
+      (dorun (map #(.close %) (vals @databases)))
+      (.close @environment)))
 
-(defn migrate []
-  (with-transaction
-    (open-database "migrations")
-    ))
+  (def ^:private migrations
+    [#(open-database "users")])
+
+  (defn migrate []
+    (with-transaction
+      (open-database "migrations"))))
+
+
