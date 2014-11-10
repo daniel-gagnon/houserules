@@ -61,9 +61,9 @@
      (eval
        `(defn ~function
           ([key# value#]
-           (~function key# value# *database*))
-          ([key# value# database#]
-           (assert (database# databases))
+           (~function *database* key# value#))
+          ([database# key# value#]
+           (assert (database# @databases))
            (assert *transaction*)
            (let [result# (enum->keyword (~method (database# databases) *transaction* (clj->entry key) (clj->entry value#)))]
              (if (= result# :success)
@@ -75,9 +75,9 @@
      {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
 
 (defn db-get
-  ([key] (db-get key *database*))
-  ([key database]
-   (assert (database databases))
+  ([key] (db-get *database* key))
+  ([database key]
+   (assert (database @databases))
    (assert *transaction*)
    (let [tmp-entry (DatabaseEntry.)
          result (enum->keyword (.get (database databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
@@ -114,8 +114,8 @@
 
 (defmacro with-database [db & bodies]
   `(do
-     (assert (db databases))
-     (binding [*database* db]
+     (assert (~db @databases))
+     (binding [*database* ~db]
        ~@bodies)))
 
 (defn shutdown-database []
@@ -125,6 +125,10 @@
     (dorun (map #(.close %) (vals @databases)))
     (.close @environment)))
 
+(def ^:private migrations
+  [#(open-database "users")])
+
 (defn migrate []
   (with-transaction
-    (open-database "migrations")))
+    (open-database "migrations")
+    ))
