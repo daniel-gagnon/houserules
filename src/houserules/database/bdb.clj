@@ -1,7 +1,7 @@
 (ns houserules.database.bdb
   (:require [taoensso.nippy :as nippy]
             [slingshot.slingshot :refer [try+ throw+]]
-            [clojure.core.typed :refer [cf ann U Any tc-ignore non-nil-return check-ns Kw Map Atom1]])
+            [clojure.core.typed :refer [cf ann U Any tc-ignore non-nil-return check-ns Kw Map Atom1 nilable-param method-type]])
   (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode Cursor OperationStatus StatsConfig Transaction$State]
            [java.io File]
            [java.util.concurrent.locks Lock ReentrantReadWriteLock ReentrantReadWriteLock$WriteLock]
@@ -39,20 +39,23 @@
 (ann databases (Atom1 (Map Kw Database)))
 (def ^:private databases (atom {}))
 
+(non-nil-return com.sleepycat.je.Environment/openDatabase :all)
+(nilable-param com.sleepycat.je.Environment/openDatabase {3 #{0}})
 (ann open-database [String -> Database])
 (defn- open-database [name]
   (let [kw-name (keyword name)]
     (or
       (kw-name @databases)
-      (let [db (.openDatabase @environment *transaction* name (doto (DatabaseConfig.) (.setAllowCreate true) (.setTransactional true)))]
+      (let [db (.openDatabase ^Environment @environment *transaction* name (doto (DatabaseConfig.) (.setAllowCreate true) (.setTransactional true)))]
         (swap! databases assoc kw-name db)
         db))))
 
+(ann ^:no-check taoensso.nippy/freeze [Any -> (Array byte)])
+(ann clj->entry [Any -> DatabaseEntry])
+(defn clj->entry [data]
+  (DatabaseEntry. (nippy/freeze data)))
 
 (tc-ignore
-  (ann clj->entry [Any -> DatabaseEntry])
-  (defn clj->entry [data]
-    (DatabaseEntry. (nippy/freeze data)))
 
   (defn entry->clj [entry]
     (nippy/thaw (.getData entry)))
