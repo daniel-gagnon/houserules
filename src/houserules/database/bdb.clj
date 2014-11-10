@@ -55,19 +55,18 @@
 (defn clj->entry [data]
   (DatabaseEntry. (nippy/freeze data)))
 
+(ann ^:no-check taoensso.nippy/thaw [(Array byte) -> Any])
+(ann entry->clj [DatabaseEntry -> Any])
+(defn entry->clj [^DatabaseEntry entry]
+  (nippy/thaw (.getData entry)))
+
+(non-nil-return java.lang.Enum/name :all)
+(non-nil-return java.lang.String/toLowerCase :all)
+(ann enum->keyword [Enum -> Kw])
+(defn enum->keyword [^Enum enum]
+  (keyword (.toLowerCase (.name enum))))
+
 (tc-ignore
-
-  (defn entry->clj [entry]
-    (nippy/thaw (.getData entry)))
-
-  (defn commit []
-    (.commit *transaction*))
-
-  (defn abort []
-    (.abort *transaction*))
-
-  (defn enum->keyword [enum]
-    (keyword (.toLowerCase (.name enum))))
 
   (dorun (map
            (fn [[function method]]
@@ -116,6 +115,13 @@
                (if (= result OperationStatus/SUCCESS)
                  (MapEntry. (entry->clj k) (entry->clj v))
                  (do (.close cursor) nil)))))))))
+
+
+  (defn commit []
+    (.commit ^Transaction *transaction*))
+
+  (defn abort []
+    (.abort ^Transaction *transaction*))
 
   (defmacro with-transaction [& bodies]
     `(try-read-lock
