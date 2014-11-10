@@ -1,14 +1,18 @@
 (ns houserules.core
   (:require [reagent.core :as reagent :refer [atom]]
             [houserules.routes :refer [current-page]]
-            [houserules.login :refer [logged-in?]]))
+            [houserules.login :refer [logged-in?]]
+            [houserules.user :as user]))
+
+(defn sign-out-text []
+  [:span "Sign out (" (or @user/name @user/email) ")"])
 
 (defn sign-in-out
   "Sign in or out section"
   []
   [:nav.right.menu
-   (if (logged-in?)
-     [:a.item {:on-click #(.logout (.-id js/navigator))} [:i.sign.out.icon] "Sign out"]
+   (if @logged-in?
+     [:a.item {:on-click #(.logout (.-id js/navigator))} [:i.sign.out.icon] [sign-out-text]]
      [:a.item {:on-click #(.request (.-id js/navigator))} [:i.sign.in.icon] "Sign in"])])
 
 (defn top-nav
