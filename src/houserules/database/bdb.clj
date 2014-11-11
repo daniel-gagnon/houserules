@@ -4,7 +4,8 @@
   (:import [com.sleepycat.je Environment EnvironmentConfig DatabaseConfig DatabaseEntry Transaction TransactionStats Database LockMode Cursor OperationStatus StatsConfig Transaction$State]
            [java.io File]
            [java.util.concurrent.locks Lock ReentrantReadWriteLock ReentrantReadWriteLock$WriteLock]
-           [clojure.lang MapEntry]))
+           [clojure.lang MapEntry]
+           [org.joda.time DateTime]))
 
 ; The write lock is acquired and never released when the database is shutting down
 ; to prevent more transactions going in
@@ -136,8 +137,20 @@
     (.close @environment)))
 
 (def ^:private migrations
-  [#(open-database "users")])
+  [#(open-database "settings")
+   #(open-database "users")])
+
+(defn- last-migration []
+  (try+
+    (:sequence (db-get :migrations :last-migration))
+    (catch [:error :notfound] _ 0)))
 
 (defn migrate []
   (with-transaction
-    (open-database "migrations")))
+    (open-database "migrations")
+    (let [lm (last-migration)]
+      (->> migrations
+           (drop lm)
+           (map #(%))
+           dorun)
+      (put :migrations :last-migration {:sequence (- (count migrations) lm) :migration-date (DateTime.)}))))
