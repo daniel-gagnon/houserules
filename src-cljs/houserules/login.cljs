@@ -2,17 +2,22 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [ajax.core :refer [GET POST]]))
 
-(def logged-in? (atom false))
+(def email (atom nil))
+(def full-name (atom nil))
+
+(defn- register-user [user]
+  (reset! email (user "email"))
+  (reset! full-name (user "name")))
 
 (defn- on-login [assertion]
   (POST "/auth/login"
         {:params {:assertion assertion}
-         :handler #(reset! logged-in? true)
+         :handler register-user
          :error-handler #(do (js/alert "Login eror") (.log js/console %) (.logout (.-id js/navigator)))}))
 
 (defn- on-logout []
   (POST "/auth/logout"
-        {:handler #(reset! logged-in? false)
+        {:handler #(do (reset! email nil) (reset! full-name nil))
          :error-handler #(do (js/alert "Logout eror") (.log js/console %))}))
 
 (GET "/auth/whoami"

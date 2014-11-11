@@ -1,17 +1,16 @@
 (ns houserules.core
   (:require [reagent.core :as reagent :refer [atom]]
             [houserules.routes :refer [current-page]]
-            [houserules.login :refer [logged-in?]]
-            [houserules.user :as user]))
+            [houserules.login :refer [email full-name]]))
 
 (defn sign-out-text []
-  [:span "Sign out (" (or @user/name @user/email) ")"])
+  [:span "Sign out (" (or @email @full-name) ")"])
 
 (defn sign-in-out
   "Sign in or out section"
   []
   [:nav.right.menu
-   (if @logged-in?
+   (if @email
      [:a.item {:on-click #(.logout (.-id js/navigator))} [:i.sign.out.icon] [sign-out-text]]
      [:a.item {:on-click #(.request (.-id js/navigator))} [:i.sign.in.icon] "Sign in"])])
 
