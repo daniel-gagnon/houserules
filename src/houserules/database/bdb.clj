@@ -51,22 +51,63 @@
 (defn enum->keyword [^Enum enum]
   (keyword (.toLowerCase (.name enum))))
 
+(defn commit []
+  (.commit ^Transaction *transaction*))
+
+(defn abort []
+  (.abort ^Transaction *transaction*))
+
+
+(defmacro with-transaction [& bodies]
+  `(try-read-lock
+     (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
+       (try+
+         ~@bodies
+         (catch Object o# (do (when (= (.getState *transaction*) Transaction$State/OPEN) (abort)) (throw+ o#)))
+         (finally (do (when (= (.getState *transaction*) Transaction$State/OPEN) (commit))))))))
+
+(defmacro with-database [db & bodies]
+  `(do
+     (assert (~db @databases))
+     (binding [*database* ~db]
+       ~@bodies)))
+
+(defn put
+  ([k v] (put *database* k v))
+  ([db k v]
+   (assert (and (keyword? db)) (db @databases))
+   (letfn [(inner-fn
+             [db k v]
+             (let [result (enum->keyword (.put (db @databases) *transaction* (clj->entry k) (clj->entry v)))]
+               (if (= result :success)
+                 :success
+                 (throw+ {:error result
+                          :database db
+                          :key k
+                          :value v}))))]
+     (if *transaction*
+       (inner-fn db k v)
+       (with-transaction (inner-fn db k v))))))
+
 (dorun (map
          (fn [[function method]]
            (eval
              `(defn ~function
-                ([key# value#]
-                 (~function *database* key# value#))
-                ([database# key# value#]
-                 (assert (database# @databases))
-                 (assert *transaction*)
-                 (let [result# (enum->keyword (~method (database# databases) *transaction* (clj->entry key) (clj->entry value#)))]
-                   (if (= result# :success)
-                     :success
-                     (throw+ {:error result#
-                              :database database#
-                              :key key#
-                              :value value#})))))))
+                ([k# v#] (~function *database* k# v#))
+                ([db# k# v#]
+                 (assert (and (keyword? db#)) (db# @databases))
+                 (letfn [(inner-fn#
+                           [db# k# v#]
+                           (let [result# (enum->keyword (~method (db# @databases) *transaction* (clj->entry k#) (clj->entry v#)))]
+                             (if (= result# :success)
+                               :success
+                               (throw+ {:error result#
+                                        :database db#
+                                        :key k#
+                                        :value v#}))))]
+                   (if *transaction*
+                     (inner-fn# db# k# v#)
+                     (with-transaction (inner-fn# db# k# v#))))))))
          {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
 
 (defn db-get
@@ -75,7 +116,7 @@
    (assert (database @databases))
    (assert *transaction*)
    (let [tmp-entry (DatabaseEntry.)
-         result (enum->keyword (.get (database databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
+         result (enum->keyword (.get (database @databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
      (if (= result :success)
        (entry->clj tmp-entry)
        (throw+
@@ -98,27 +139,6 @@
              (if (= result OperationStatus/SUCCESS)
                (MapEntry. (entry->clj k) (entry->clj v))
                (do (.close cursor) nil)))))))))
-
-
-(defn commit []
-  (.commit ^Transaction *transaction*))
-
-(defn abort []
-  (.abort ^Transaction *transaction*))
-
-(defmacro with-transaction [& bodies]
-  `(try-read-lock
-     (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
-       (try+
-         ~@bodies
-         (catch Object o# (do (when (= (.getState *transaction*) Transaction$State/OPEN) (abort)) (throw+ o#)))
-         (finally (do (when (= (.getState *transaction*) Transaction$State/OPEN) (commit))))))))
-
-(defmacro with-database [db & bodies]
-  `(do
-     (assert (~db @databases))
-     (binding [*database* ~db]
-       ~@bodies)))
 
 (defn shutdown-database []
   (when (realized? environment)
