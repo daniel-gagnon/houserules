@@ -25,8 +25,7 @@
    [com.sleepycat/je "6.2.7"]
    [com.taoensso/nippy "2.7.0"]
    [slingshot "0.12.1"]
-   [org.clojure/tools.trace "0.7.8"]
-   [org.clojure/core.typed "0.2.72"]]
+   [org.clojure/tools.trace "0.7.8"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts
@@ -36,8 +35,7 @@
   [[lein-ring "0.8.13"]
    [lein-environ "1.0.0"]
    [lein-ancient "0.5.5"]
-   [lein-cljsbuild "1.0.3"]
-   [lein-typed "0.3.5"]]
+   [lein-cljsbuild "1.0.3"]]
   :ring
   {:handler houserules.handler/app,
    :init houserules.handler/init,
