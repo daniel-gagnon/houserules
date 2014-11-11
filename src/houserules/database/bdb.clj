@@ -64,7 +64,7 @@
      (binding [*transaction* (.beginTransaction @environment *transaction* nil)]
        (try+
          ~@bodies
-         (catch Object o# (do (when (= (.getState *transaction*) Transaction$State/OPEN) (abort)) (throw+ o#)))
+         (catch Object o# (do (when (= (.getState *transaction*) Transaction$State/OPEN) (abort)) (throw+)))
          (finally (do (when (= (.getState *transaction*) Transaction$State/OPEN) (commit))))))))
 
 (defmacro with-database [db & bodies]
