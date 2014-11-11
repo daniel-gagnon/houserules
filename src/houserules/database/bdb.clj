@@ -72,23 +72,7 @@
      (binding [*database* ~db]
        ~@bodies)))
 
-(defn put
-  ([k v] (put *database* k v))
-  ([db k v]
-   (assert (and (keyword? db)) (db @databases))
-   (letfn [(inner-fn
-             [db k v]
-             (let [result (enum->keyword (.put (db @databases) *transaction* (clj->entry k) (clj->entry v)))]
-               (if (= result :success)
-                 :success
-                 (throw+ {:error result
-                          :database db
-                          :key k
-                          :value v}))))]
-     (if *transaction*
-       (inner-fn db k v)
-       (with-transaction (inner-fn db k v))))))
-
+(declare put put-no-overwrite put-no-dup-data)
 (dorun (map
          (fn [[function method]]
            (eval
