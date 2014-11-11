@@ -6,16 +6,19 @@
 (def full-name (atom nil))
 
 (defn- register-user [user]
+  "Register the user's email and name"
   (reset! email (user "email"))
   (reset! full-name (user "name")))
 
 (defn- on-login [assertion]
+  "Called by persona on a succesful login. Go fetch session credentials on the backend."
   (POST "/auth/login"
         {:params {:assertion assertion}
          :handler register-user
          :error-handler #(do (js/alert "Login eror") (.log js/console %) (.logout (.-id js/navigator)))}))
 
 (defn- on-logout []
+  "Called by persona on logout. Destroy session on backend."
   (POST "/auth/logout"
         {:handler #(do (reset! email nil) (reset! full-name nil))
          :error-handler #(do (js/alert "Logout eror") (.log js/console %))}))
