@@ -113,16 +113,20 @@
 (defn db-get
   ([key] (db-get *database* key))
   ([database key]
-   (assert (database @databases))
-   (assert *transaction*)
-   (let [tmp-entry (DatabaseEntry.)
-         result (enum->keyword (.get (database @databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
-     (if (= result :success)
-       (entry->clj tmp-entry)
-       (throw+
-         {:error result
-          :database database
-          :key key})))))
+   (assert (and (keyword? database) (database @databases)))
+   (letfn [(inner-fn
+             [database key]
+             (let [tmp-entry (DatabaseEntry.)
+                   result (enum->keyword (.get (database @databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
+               (if (= result :success)
+                 (entry->clj tmp-entry)
+                 (throw+
+                   {:error result
+                    :database database
+                    :key key}))))]
+     (if *transaction*
+       (inner-fn database key)
+       (with-transaction (inner-fn database key))))))
 
 (defn db-seq
   ([] (db-seq *database*))
