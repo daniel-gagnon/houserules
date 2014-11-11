@@ -157,5 +157,3 @@
 (defn migrate []
   (with-transaction
     (open-database "migrations")))
-
-
