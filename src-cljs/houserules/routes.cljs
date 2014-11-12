@@ -1,8 +1,6 @@
 (ns houserules.routes
   (:require [reagent.core :as reagent :refer [atom]]
-            [secretary.core :as secretary]
-            [goog.events :as events]
-            [goog.history.EventType :as EventType])
+            [secretary.core :as secretary])
   (:import goog.History)
   (:require-macros [secretary.core :refer [defroute]]))
 
@@ -12,10 +10,9 @@
 (defroute admin-route "/admin" [] (reset! current-page :admin))
 (defroute profile-route "/profile" [] (reset! current-page :profile))
 
-(let [h (History.)]
-  (events/listen h EventType/NAVIGATE #(secretary/dispatch! (.-token %)))
-  (.setEnabled h true))
-
 (defn navigate-to [p]
-  (.pushState js/history nil "" p)
+  (.pushState js/history p "" p)
   (secretary/dispatch! p))
+
+(aset js/window "onpopstate"
+      (fn [event] (secretary/dispatch! (or (aget event "state") "/"))))
