@@ -10,11 +10,10 @@
 ; The write lock is acquired and never released when the database is shutting down
 ; to prevent more transactions going in
 
-(def ^:private ^ReentrantReadWriteLock rwlock (ReentrantReadWriteLock.))
+(def ^ReentrantReadWriteLock rwlock (ReentrantReadWriteLock.))
 
-(def ^:private ^:dynamic *transaction* nil)
-
-(def ^:private ^:dynamic *database* nil)
+(def ^:dynamic *transaction* nil)
+(def ^:dynamic *database* nil)
 
 (defmacro try-read-lock [& bodies]
   `(when (.tryLock (.readLock rwlock))
@@ -25,7 +24,7 @@
 (defn jam-lock []
   (.lock (.writeLock rwlock)))
 
-(def ^:private environment
+(def environment
   (delay
     (let [db-folder (File. "database")]
       (.mkdir db-folder)
@@ -33,7 +32,7 @@
         db-folder
         (doto (EnvironmentConfig.) (.setAllowCreate true) (.setTransactional true))))))
 
-(def ^:private databases (atom {}))
+(def databases (atom {}))
 
 (defn- open-database [name]
   (let [kw-name (keyword name)]
@@ -143,8 +142,12 @@
 (defn- last-migration []
   (:sequence (db-get :last-migration :database :migrations :default {:sequence 0})))
 
+(defn open-all-known-databases []
+  (dorun (map open-database (.getDatabaseNames @environment))))
+
 (defn migrate []
   (with-transaction
+    (open-all-known-databases)
     (open-database "migrations")
     (let [lm (last-migration)]
       (->> migrations

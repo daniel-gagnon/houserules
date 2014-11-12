@@ -13,11 +13,31 @@
             [environ.core :refer [env]]
             [cronj.core :as cronj]
             [ring.middleware.session.cookie :refer [cookie-store]]
-            [houserules.database.bdb :refer [migrate shutdown-database]]))
+            [houserules.database.bdb :refer [migrate shutdown-database db-get put with-transaction]]))
 
 (defroutes base-routes
   (route/resources "/static/")
   (route/not-found "Not Found"))
+
+(defn first-config []
+  (let [owner (db-get :owner :database :settings :default "")
+        domain (db-get :domain :database :settings :default "")]
+    (when (or
+            (env :houserules_init)
+            (= owner "")
+            (= domain ""))
+      (let [new-owner (do (print (str "Owner's e-mail [" owner "]: ")) (flush) (read-line))
+            new-domain (do
+                         (print (str "Domain for authentication [" (if (and (env :dev) (= domain ""))
+                                                  "http://localhost:3000"
+                                                  domain) "]: "))
+                                (flush)
+                                (read-line))]
+        (with-transaction
+          (put :settings :owner new-owner)
+          (put :settings :domain (if (and (env :dev) (= new-domain ""))
+                                   "http://localhost:3000"
+                                   new-domain)))))))
 
 (defn init
   "init will be called once when
@@ -40,6 +60,8 @@
   (if (env :dev) (parser/cache-off!))
 
   (migrate)
+
+  (first-config)
 
   (timbre/info "\n-=[ houserules started successfully"
                (when (env :dev) "using the development profile") "]=-"))
