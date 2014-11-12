@@ -1,6 +1,6 @@
 (ns houserules.topnav
   (:require [reagent.core :as reagent :refer [atom]]
-            [houserules.routes :refer [current-page]]
+            [houserules.routes :refer [current-page navigate-to home-route admin-route profile-route]]
             [houserules.login :refer [email full-name admin?]]))
 
 (defn sign-out-text []
@@ -14,19 +14,15 @@
     [:a.item {:on-click #(.request (.-id js/navigator))} [:i.sign.in.icon] "Sign in"])
   )
 
-(defn admin []
-  (when @admin?
-    [:a.item [:i.settings.icon] "Admin"]))
-
-(defn profile []
-  (when @email
-    [:a.item [:i.user.icon] "Profile"]))
+(defn toolbar-button [caption pred icon kw url]
+  (when pred
+    [(if (= @current-page kw) :a.active.item :a.item) {:on-click #(navigate-to url)} [(keyword (str "i." icon ".icon"))] caption]))
 
 (defn top-nav
   "Navigation on top"
   []
-  [:nav.ui.menu [:a.active.item [:i.home.icon] "Home"]
+  [:nav.ui.menu [toolbar-button "Home" true "home" :home (home-route)]
    [:nav.right.menu
-    [profile]
-    [admin]
+    [toolbar-button "Profile" @email "user" :profile (profile-route)]
+    [toolbar-button "Admin" @admin? "settings" :admin (admin-route)]
     [sign-in-out]]])

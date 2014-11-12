@@ -8,7 +8,7 @@
   []
   [:div
    [top-nav]
-   (case (current-page)
+   (case @current-page
      :home [:h1 "Home"])])
 
 (defn init! []

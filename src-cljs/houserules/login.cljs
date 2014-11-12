@@ -22,7 +22,7 @@
 (defn- on-logout []
   "Called by persona on logout. Destroy session on backend."
   (POST "/auth/logout"
-        {:handler #(do (reset! email nil) (reset! full-name nil))
+        {:handler #(do (reset! email nil) (reset! full-name nil) (reset! admin? false))
          :error-handler #(do (js/alert "Logout eror") (.log js/console %))}))
 
 (GET "/auth/whoami"

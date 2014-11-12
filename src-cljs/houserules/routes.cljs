@@ -6,16 +6,15 @@
   (:import goog.History)
   (:require-macros [secretary.core :refer [defroute]]))
 
-(def ^:private page (atom :home))
-(defn current-page [] @page)
+(def current-page (atom :home))
 
-(defroute "/" [] (reset! page :home))
+(defroute home-route "/" [] (reset! current-page :home))
+(defroute admin-route "/admin" [] (reset! current-page :admin))
+(defroute profile-route "/profile" [] (reset! current-page :profile))
 
 (let [h (History.)]
   (events/listen h EventType/NAVIGATE #(secretary/dispatch! (.-token %)))
   (.setEnabled h true))
 
-(let [pages {:home "/"}]
-  (defn navigate-to [p]
-    {:pre [(contains? (keys pages) p)]}
-    (.pushState js/history nil "" (p pages))))
+(defn navigate-to [p]
+  (.pushState js/history nil "" p))
