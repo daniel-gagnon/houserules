@@ -4,9 +4,9 @@
       <meta http-equiv="X-UA-Compatible" content="IE=Edge">
       <title>Houserules</title>
       {% if dev %}
-        {% style "/semantic/css/semantic.css" %}
+        {% style "/static/semantic/css/semantic.css" %}
       {% else %}
-        {% style "/semantic/css/semantic.min.css" %}
+        {% style "/static/semantic/css/semantic.min.css" %}
       {% endif %}
   </head>
   <body id="app">
@@ -63,12 +63,12 @@
     </script>
     {% if dev %}
       <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react.js"></script>
-      {% script "/js/out/goog/base.js" %}
-      {% script "/js/app.js" %}
+      {% script "/static/js/out/goog/base.js" %}
+      {% script "/static/js/app.js" %}
       <script type="text/javascript">goog.require("houserules.app");</script>
     {% else %}
       <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react.min.js"></script>
-      {% script "/js/app.js" %}
+      {% script "/static/js/app.js" %}
     {% endif %}
   </body>
 </html>

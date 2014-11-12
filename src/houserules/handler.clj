@@ -16,7 +16,7 @@
             [houserules.database.bdb :refer [migrate shutdown-database]]))
 
 (defroutes base-routes
-  (route/resources "/")
+  (route/resources "/static/")
   (route/not-found "Not Found"))
 
 (defn init
