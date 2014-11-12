@@ -11,7 +11,8 @@
    (case @current-page
      :home [:h1 "Home"]
      :profile [:h1 "Profile"]
-     :admin [:h1 "Admin"])])
+     :admin [:h1 "Admin"]
+     nil)])
 
 (defn init! []
   (reagent/render-component [site] (.getElementById js/document "app")))
