@@ -96,16 +96,16 @@
          {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
 
 (defn db-get
-  ([key] (db-get *database* key))
-  ([database key]
+  ([key & {:keys [database default] :as kwargs :or {:database *database*}}]
    (assert (and (keyword? database) (database @databases)))
    (letfn [(inner-fn
              [database key]
              (let [tmp-entry (DatabaseEntry.)
                    result (enum->keyword (.get (database @databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
-               (if (= result :success)
-                 (entry->clj tmp-entry)
-                 (throw+
+               (cond
+                 (= result :success) (entry->clj tmp-entry)
+                 (and (= result :notfound) (contains? kwargs :default)) default
+                 :else (throw+
                    {:error result
                     :database database
                     :key key}))))]
@@ -141,9 +141,7 @@
    #(open-database "users")])
 
 (defn- last-migration []
-  (try+
-    (:sequence (db-get :migrations :last-migration))
-    (catch [:error :notfound] _ 0)))
+  (:sequence (db-get :last-migration :database :migrations :default {:sequence 0})))
 
 (defn migrate []
   (with-transaction
