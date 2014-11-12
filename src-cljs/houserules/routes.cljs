@@ -17,4 +17,5 @@
   (.setEnabled h true))
 
 (defn navigate-to [p]
-  (.pushState js/history nil "" p))
+  (.pushState js/history nil "" p)
+  (secretary/dispatch! p))

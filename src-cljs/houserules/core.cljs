@@ -9,7 +9,9 @@
   [:div
    [top-nav]
    (case @current-page
-     :home [:h1 "Home"])])
+     :home [:h1 "Home"]
+     :profile [:h1 "Profile"]
+     :admin [:h1 "Admin"])])
 
 (defn init! []
   (reagent/render-component [site] (.getElementById js/document "app")))
