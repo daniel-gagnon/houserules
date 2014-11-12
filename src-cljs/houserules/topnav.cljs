@@ -18,10 +18,15 @@
   (when @admin?
     [:a.item [:i.settings.icon] "Admin"]))
 
+(defn profile []
+  (when @email
+    [:a.item [:i.user.icon] "Profile"]))
+
 (defn top-nav
   "Navigation on top"
   []
   [:nav.ui.menu [:a.active.item [:i.home.icon] "Home"]
    [:nav.right.menu
+    [profile]
     [admin]
     [sign-in-out]]])
