@@ -18,3 +18,6 @@
 (defn logout [] (session/clear!))
 
 (defn whoami [] (session/get :email))
+
+(defn admin? []
+  (= (session/get :email) (db-get :owner :database :settings :default nil)))

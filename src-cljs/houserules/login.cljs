@@ -4,11 +4,13 @@
 
 (def email (atom nil))
 (def full-name (atom nil))
+(def admin? (atom false))
 
 (defn- register-user [user]
   "Register the user's email and name"
   (reset! email (user "email"))
-  (reset! full-name (user "name")))
+  (reset! full-name (user "name"))
+  (reset! admin? (user "admin")))
 
 (defn- on-login [assertion]
   "Called by persona on a succesful login. Go fetch session credentials on the backend."
