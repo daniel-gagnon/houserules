@@ -1,7 +1,8 @@
 (ns houserules.login
   (:require [reagent.core :as reagent :refer [atom]]
             [ajax.core :refer [GET POST]]
-            [houserules.routes :refer [navigate-to]]))
+            [houserules.routes :refer [navigate-to]]
+            [reagent.cookies :as cookies]))
 
 (def email (atom nil))
 (def full-name (atom nil))
@@ -20,17 +21,13 @@
          :handler register-user
          :error-handler #(do (js/alert "Login eror") (.log js/console %) (.logout (.-id js/navigator)))}))
 
-(defn logout []
+(defn- on-logout []
+  "Called by persona on logout. Destroy session."
   (reset! email nil)
   (reset! full-name nil)
   (reset! admin? false)
+  (cookies/remove! :houserules-session)
   (navigate-to "/"))
-
-(defn- on-logout []
-  "Called by persona on logout. Destroy session on backend."
-  (POST "/auth/logout"
-        {:handler logout
-         :error-handler #(do (js/alert "Logout eror") (.log js/console %))}))
 
 (GET "/auth/whoami"
      :handler
