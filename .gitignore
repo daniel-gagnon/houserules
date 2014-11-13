@@ -14,3 +14,5 @@ resources/public/js/
 .vagrant/
 database/
 node_modules/
+.sass-cache/
+resources/public/css/
