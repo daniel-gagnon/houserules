@@ -6,7 +6,7 @@
   :url
   "http://example.com/FIXME"
   :dependencies
-  [[reagent-forms "0.2.4"]
+  [[reagent-forms "0.2.6"]
    [com.taoensso/tower "3.0.2"]
    [http-kit "2.1.19"]
    [prone "0.6.0"]
