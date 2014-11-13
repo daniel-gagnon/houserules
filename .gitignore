@@ -13,3 +13,4 @@ houserules.iml
 resources/public/js/
 .vagrant/
 database/
+node_modules/
