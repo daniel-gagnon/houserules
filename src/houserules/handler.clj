@@ -1,6 +1,6 @@
 (ns houserules.handler
   (:require [compojure.core :refer [defroutes]]
-            [houserules.routes.home :refer [home-routes]]
+            [houserules.routes.app :refer [app-routes]]
             [houserules.routes.auth :refer [auth-routes]]
             [houserules.middleware :refer [load-middleware]]
             [noir.response :refer [redirect]]
@@ -16,8 +16,7 @@
             [houserules.database.bdb :refer [migrate shutdown-database db-get put with-transaction]]))
 
 (defroutes base-routes
-  (route/resources "/static/")
-  (route/not-found "Not Found"))
+  (route/resources "/static/"))
 
 (defn first-config []
   (let [owner (db-get :owner :database :settings :default "")
@@ -90,7 +89,7 @@
 
 (def app (app-handler
            ;; add your application routes here
-           [home-routes auth-routes base-routes]
+           [auth-routes base-routes app-routes]
            :session-options {:cookie-name "houserules-session"
                              :store (cookie-store)}
            ;; add custom middleware here
