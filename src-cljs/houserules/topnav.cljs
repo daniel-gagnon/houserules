@@ -21,7 +21,7 @@
 (defn top-nav
   "Navigation on top"
   []
-  [:nav.ui.menu [toolbar-button "Home" true "home" :home (home-route)]
+  [:nav.ui.menu [toolbar-button "Home" @email "home" :home (home-route)]
    [:nav.right.menu
     [toolbar-button "Profile" @email "user" :profile (profile-route)]
     [toolbar-button "Admin" @admin? "settings" :admin (admin-route)]
