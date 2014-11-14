@@ -15,7 +15,7 @@ gulp.task('sass', function () {
 gulp.task('prefix', ['sass'], function() {
     return gulp.src('resources/public/css/*.css')
             .pipe(autoprefixer({
-                browsers: ['ie > 9 last two versions']
+                browsers: ['ie > 9, last two versions']
             }))
             .pipe(gulp.dest('resources/public/css/'));
 });
