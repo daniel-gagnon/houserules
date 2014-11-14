@@ -14,7 +14,7 @@
 (defn site
   "The whole site"
   []
-  [:div
+  [:div.container
    [top-nav]
    (if @email
      (case @current-page
