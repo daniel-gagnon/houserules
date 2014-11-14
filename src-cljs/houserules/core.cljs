@@ -6,10 +6,13 @@
             [houserules.pages.profile :refer [profile]]))
 
 (defn welcome-message []
-  [:div.ui.message
-   [:div.header "Welcome to Houserules"]
-   [:p "Houserules is a tool to manage your LARPs and LARPing with the White Wolf™ franchises."]
-   [:p "Please log in with a valid e-mail address."]])
+  (when (not (nil? @email))
+    [:div.ui.message
+     [:div.header "Welcome to Houserules"]
+     [:p "Houserules is a tool to manage your LARPs and LARPing with the White Wolf™ franchises."]
+     [:p "Please log in with a valid e-mail address."]]
+    )
+  )
 
 (defn site
   "The whole site"

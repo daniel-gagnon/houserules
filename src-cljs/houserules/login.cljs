@@ -23,7 +23,7 @@
 
 (defn- on-logout []
   "Called by persona on logout. Destroy session."
-  (reset! email nil)
+  (reset! email false)
   (reset! full-name nil)
   (reset! admin? false)
   (cookies/remove! :houserules-session)
