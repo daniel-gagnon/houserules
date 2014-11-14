@@ -21,8 +21,13 @@ gulp.task('prefix', ['sass'], function() {
             .pipe(gulp.dest('resources/public/css/'));
 });
 
-gulp.task('watch', function() {
-    gulp.watch('resources/public/scss/*.scss', ['sass']);
+gulp.task('watch', ['prefix'], function(cb) {
+    gulp.watch('resources/public/scss/*.scss', ['prefix']);
+    exec('lein cljsbuild auto', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
 });
 
 gulp.task('minify', ['prefix'], function() {
