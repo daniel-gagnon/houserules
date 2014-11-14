@@ -10,3 +10,33 @@ $susy: (
 .container {
     @include container();
 }
+
+#profile-panel {
+    @include span(3);
+    
+    input {
+        width: 100%;
+    }
+    
+    #picture-chooser {
+        float: left;
+        
+        #picture-placeholder {
+            width: 160px;
+            height: 160px;
+            background-color: white;
+            border-style: solid;
+            border-width: 1px;
+            border-color: black;
+        }
+        
+        button {
+            width: 160px;
+        }
+    }
+    
+    #contact {
+        width: calc(100% - 160px - #{gutter(3)});
+        float: right;
+    }
+}

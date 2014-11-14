@@ -9,18 +9,20 @@
 
 (defn profile-form []
   [:div.ui.form
-   (row "Name" [:input {:field :text, :id :name}])
-   (row "Home Phone" [:input {:field :text, :id :home-phone}])
-   (row "Mobile" [:input {:field :text, :id :mobile-phone}])
+   [:div#picture-chooser
+    [:div#picture-placeholder]
+    [:button "Upload a new avatar"]]
+   [:div#contact
+    (row "Name" [:input {:field :text, :id :name}])
+    (row "Home Phone" [:input {:field :text, :id :home-phone}])
+    (row "Mobile" [:input {:field :text, :id :mobile-phone}])
+    ]
    (row "Address" [:textarea {:field :textarea, :id :address}])
    (row "Notes" [::textarea {:field :textarea, :id :notes}])
 
    ])
 
 (defn profile []
-  [:div
+  [:div#profile-panel
    [:h1.ui.header "Profile"]
-   [:div.ui.grid
-    [:div.four.wide.column
-     [:div.ui.segment
-      [profile-form]]]]])
+   [profile-form]])
