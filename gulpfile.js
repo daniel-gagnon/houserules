@@ -5,9 +5,22 @@ var concat = require('gulp-concat');
 var csso = require('gulp-csso');
 var exec = require('child_process').exec;
 var rimraf = require('rimraf');
+var argv   = require('yargs').argv;
+var gulpif = require('gulp-if');
+var insert = require('gulp-insert')
+
+var prod = argv.prod
+
+gulp.task('clean', function() {
+    rimraf.sync('./target');
+    rimraf.sync('./resources/public/css')
+    rimraf.sync('./resources/public/js')
+    rimraf.sync('./.sass-cache')
+});
 
 gulp.task('sass', function () {
     return gulp.src('resources/public/scss/*.scss')
+        .pipe(gulpif(prod, insert.prepend('$prod: true;\n')))
         .pipe(sass())
         .on('error', function (err) { console.log(err.message); })
         .pipe(gulp.dest('resources/public/css/'));
@@ -37,12 +50,6 @@ gulp.task('minify', ['prefix'], function() {
         .pipe(gulp.dest('resources/public/css/'));
 });
 
-gulp.task('clean', function() {
-    rimraf.sync('./target');
-    rimraf.sync('./resources/public/css')
-    rimraf.sync('./resources/public/js')
-    rimraf.sync('./.sass-cache')
-});
 
 
 gulp.task('build', ['clean', 'minify'], function (cb) {
@@ -53,4 +60,4 @@ gulp.task('build', ['clean', 'minify'], function (cb) {
   });
 })
 
-gulp.task('default', ['sass', 'prefix'], function() {});
+gulp.task('default', ['build'], function() {});

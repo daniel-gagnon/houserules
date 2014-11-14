@@ -1,9 +1,15 @@
 @import "susy";
 
+$prod: false !default;
+$debug: show;
+@if $prod {
+    $debug: hide;
+}
+
 $susy: (
     columns: 12,
     debug: (
-      image: show
+      image: $debug
   ),
 );
 
