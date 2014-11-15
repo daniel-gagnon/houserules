@@ -1,7 +1,7 @@
 (ns houserules.login
   (:require [reagent.core :as reagent :refer [atom]]
             [ajax.core :refer [GET POST]]
-            [houserules.routes :refer [navigate-to]]
+            [houserules.routes :refer [navigate-to current-page]]
             [reagent.cookies :as cookies]))
 
 (def email (atom nil))
@@ -14,12 +14,15 @@
   (reset! full-name (user "name"))
   (reset! admin? (user "admin")))
 
-(defn logout []
+
+(defn sign-out []
   (reset! email false)
   (reset! full-name nil)
   (reset! admin? false)
   (cookies/remove! :houserules-session)
   (navigate-to "/"))
+
+(add-watch current-page (gensym) (fn [_ _ _ page] (when (= page :sign-out) (sign-out))))
 
 (GET "/auth/whoami"
      :handler #())

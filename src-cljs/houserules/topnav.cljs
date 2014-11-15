@@ -1,18 +1,7 @@
 (ns houserules.topnav
   (:require [reagent.core :as reagent :refer [atom]]
-            [houserules.routes :refer [current-page navigate-to home-route admin-route profile-route]]
+            [houserules.routes :refer [current-page navigate-to home-route admin-route profile-route register-route sign-in-route sign-out-route]]
             [houserules.login :refer [email full-name admin?]]))
-
-(defn sign-out-text []
-  [:span "Sign out (" (or @email @full-name) ")"])
-
-(defn sign-in-out
-  "Sign in or out section"
-  []
-  (if @email
-    [:a.item [:i.sign.out.icon] [sign-out-text]]
-    [:a.item [:i.sign.in.icon] "Sign in"])
-  )
 
 (defn toolbar-button [caption pred icon kw url]
   (when pred
@@ -25,4 +14,6 @@
    [:nav.right.menu
     [toolbar-button "Profile" @email "user" :profile (profile-route)]
     [toolbar-button "Admin" @admin? "settings" :admin (admin-route)]
-    [sign-in-out]]])
+    [toolbar-button "Register" (not @email) "user" :register (register-route)]
+    [toolbar-button "Sign in" (not @email) ":sign.in" :sign-in (sign-in-route)]
+    [toolbar-button (str "Sign out (" (or @email @full-name) ")") @email ":sign.out" :sign-in (sign-out-route)]]])
