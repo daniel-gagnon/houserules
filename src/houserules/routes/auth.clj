@@ -11,4 +11,6 @@
         {:body true})
   (GET "/auth/whoami" []
         (let [email (whoami)]
-          {:body {:email email :admin (admin?)}})))
+          {:body {:email email :admin (admin?)}}))
+  (POST "/auth/register" [email]
+        {:body true}))
