@@ -11,53 +11,6 @@
       {% endif %}
   </head>
   <body id="app">
-  {% if dev %}
-
-  <style>
-      .animated {
-          -webkit-animation-duration: 1s;
-          animation-duration: 1s;
-          -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
-          -moz-animation-delay: 3s;
-          -webkit-animation-delay: 3s;
-      }
-
-      @-webkit-keyframes fadeInLeft {
-          0% {
-              opacity: 0;
-              -webkit-transform: translateX(-20px);
-          }
-          100% {
-              opacity: 1;
-              -webkit-transform: translateX(0);
-          }
-      }
-      @keyframes fadeInLeft {
-          0% {
-              opacity: 0;
-              transform: translateX(-20px);
-          }
-          100% {
-              opacity: 1;
-              transform: translateX(0);
-          }
-      }
-      .fadeInLeft {
-          -webkit-animation-name: fadeInLeft;
-          animation-name: fadeInLeft;
-      }
-  </style>
-
-  <div class="ui error message animated fadeInLeft">
-      <div class="header">
-          Clojurescript code is not compiled
-      </div>
-      <p>
-          Run <code>lein cljsbuild auto</code>
-      </p>
-  </div>
-  {% endif %}
     <script type="text/javascript">
         var context = "{{servlet-context}}";
     </script>
