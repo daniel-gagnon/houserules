@@ -16,3 +16,4 @@ database/
 node_modules/
 .sass-cache/
 resources/public/css/
+settings.yaml

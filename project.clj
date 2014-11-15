@@ -26,7 +26,8 @@
    [com.taoensso/nippy "2.7.0"]
    [slingshot "0.12.1"]
    [org.clojure/tools.trace "0.7.8"]
-   [joda-time/joda-time "2.5"]]
+   [joda-time/joda-time "2.5"]
+   [clj-yaml "0.4.0"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts

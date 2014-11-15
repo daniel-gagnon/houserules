@@ -1,0 +1,8 @@
+e-mail:
+    owner: owner@example.com    # Required to setup before you can configure your installation 
+    system: system@example.com  # e-mail registration links and the like will be sent from
+smtp:
+    host: smtp.example.com
+    port: 587
+    username: user
+    password: password
