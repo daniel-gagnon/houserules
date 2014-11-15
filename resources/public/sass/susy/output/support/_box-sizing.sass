@@ -1,0 +1,13 @@
+// Box Sizing
+// ==========
+
+// Box Sizing
+// ----------
+// Check for an existing support mixin, or provide a simple fallback.
+// - $model: <box-sizing>
+=susy-box-sizing($model: content-box)
+  @if susy-support(box-sizing, (mixin: box-sizing), $warn: false)
+    +box-sizing($model)
+  @else
+    $prefix: moz, webkit, official
+    +susy-prefix(box-sizing, $model, $prefix)

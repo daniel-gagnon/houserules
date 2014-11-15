@@ -1,0 +1,11 @@
+// Float Container API
+// ===================
+
+// Float Container
+// ---------------
+// - [$width]         : <length>
+// - [$justify]       : left | center | right
+// - [$math]   : fluid | static
+=float-container($width, $justify: auto auto, $property: max-width)
+  +susy-clearfix
+  +container-output($width, $justify, $property)
