@@ -1,1 +1,3 @@
-web: lein with-profile production trampoline ring server
+web: lein trampoline ring server
+cljs: lein trampoline cljsbuild auto
+sass: gulp watch
