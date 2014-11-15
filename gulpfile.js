@@ -19,7 +19,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('sass', function () {
-    return gulp.src('resources/public/sass/*.sass')
+    return gulp.src(['resources/public/sass/*.sass', 'resources/public/sass/*.scss'])
         .pipe(gulpif(prod, insert.prepend('$prod: true;\n')))
         .pipe(sass())
         .on('error', function (err) { console.log(err.message); })
@@ -35,7 +35,7 @@ gulp.task('prefix', ['sass'], function() {
 });
 
 gulp.task('watch', ['prefix'], function(cb) {
-    gulp.watch('resources/public/sass/*.sass', ['prefix']);
+    gulp.watch(['resources/public/sass/*.sass', 'resources/public/sass/*.scss'], ['prefix']);
 });
 
 gulp.task('minify', ['prefix'], function() {
