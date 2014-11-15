@@ -20,7 +20,7 @@ gulp.task('clean', function() {
 
 gulp.task('sass', function () {
     return gulp.src(['resources/public/sass/*.sass', 'resources/public/sass/*.scss'])
-        .pipe(gulpif(prod, insert.prepend('$prod: true;\n')))
+        .pipe(gulpif(function(file) {return prod && /\.sass$/.test(file.path)}, insert.prepend('$prod: true\n')))
         .pipe(sass())
         .on('error', function (err) { console.log(err.message); })
         .pipe(gulp.dest('resources/public/css/'));
