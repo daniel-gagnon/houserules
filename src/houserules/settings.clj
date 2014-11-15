@@ -1,4 +1,4 @@
-(ns houserules.email
+(ns houserules.settings
   (:require [clojure.java.io :as io]
             [clj-yaml.core :as yaml]
             [slingshot.slingshot :refer [try+]])

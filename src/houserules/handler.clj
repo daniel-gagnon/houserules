@@ -14,7 +14,7 @@
             [cronj.core :as cronj]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [houserules.database.bdb :refer [migrate shutdown-database db-get put with-transaction]]
-            [houserules.email :as email]))
+            [houserules.settings :as settings]))
 
 (defroutes base-routes
   (route/resources "/static/"))
@@ -39,9 +39,9 @@
 
   (if (env :dev) (parser/cache-off!))
 
-  (when-not (email/read-settings)
+  (when-not (settings/read-settings)
     (println "E-mail settings could not be found. You won't be able to create your admin account without valid e-mail settings.")
-    (email/write-default-settings)
+    (settings/write-default-settings)
     (println "A default settings files as been created, please fill it in.")
     (System/exit 1))
 
