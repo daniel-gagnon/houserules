@@ -3,7 +3,8 @@
             [houserules.login :refer [email]]
             [houserules.routes :refer [current-page]]
             [houserules.topnav :refer [top-nav]]
-            [houserules.pages.profile :refer [profile]]))
+            [houserules.pages.profile :refer [profile]]
+            [houserules.pages.register :refer [register]]))
 
 (defn welcome-message []
   (when (not (nil? @email))
@@ -23,7 +24,9 @@
        :profile [profile]
        :admin [:h1 "Admin"]
        nil)
-     [welcome-message])])
+     (case @current-page
+       :register [register]
+       [welcome-message]))])
 
 (defn init! []
   (reagent/render-component [site] (.getElementById js/document "app")))
