@@ -73,7 +73,7 @@
     {:source-paths ["src-cljs"],
      :compiler
      {:output-dir "resources/public/js/out",
-      :externs ["react/externs/react.js" "externs/persona.js"],
+      :externs ["react/externs/react.js"],
       :optimizations :none,
       :output-to "resources/public/js/app.js",
       :source-map "resources/public/js/out.js.map",

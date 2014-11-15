@@ -14,15 +14,7 @@
   (reset! full-name (user "name"))
   (reset! admin? (user "admin")))
 
-(defn- on-login [assertion]
-  "Called by persona on a succesful login. Go fetch session credentials on the backend."
-  (POST "/auth/login"
-        {:params {:assertion assertion}
-         :handler register-user
-         :error-handler #(do (js/alert "Login eror") (.log js/console %) (.logout (.-id js/navigator)))}))
-
-(defn- on-logout []
-  "Called by persona on logout. Destroy session."
+(defn logout []
   (reset! email false)
   (reset! full-name nil)
   (reset! admin? false)
@@ -30,7 +22,5 @@
   (navigate-to "/"))
 
 (GET "/auth/whoami"
-     :handler
-     (fn [{:keys [logged email]}]
-       (.watch (.-id js/navigator) (js-obj "loggedInUser" (if logged email nil), "onlogin" on-login, "onlogout" on-logout))))
+     :handler #())
 

@@ -10,8 +10,8 @@
   "Sign in or out section"
   []
   (if @email
-    [:a.item {:on-click #(.logout (.-id js/navigator))} [:i.sign.out.icon] [sign-out-text]]
-    [:a.item {:on-click #(.request (.-id js/navigator))} [:i.sign.in.icon] "Sign in"])
+    [:a.item [:i.sign.out.icon] [sign-out-text]]
+    [:a.item [:i.sign.in.icon] "Sign in"])
   )
 
 (defn toolbar-button [caption pred icon kw url]
