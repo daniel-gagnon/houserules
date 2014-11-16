@@ -28,6 +28,7 @@
        nil)
      (case @current-page
        :register [register]
+       :register-details [register-details]
        [welcome-message]))])
 
 (defn init! []

@@ -1,6 +1,6 @@
 (ns houserules.routes.auth
   (:require [compojure.core :refer :all]
-            [houserules.auth :refer [logout whoami admin? verify-token]]
+            [houserules.auth :refer [logout whoami admin? verify-token invalid-token?]]
             [houserules.email :as email]
             [houserules.routes.app :refer [app-page]]
             [noir.response :refer [redirect edn]]))
@@ -14,7 +14,7 @@
         (edn true))
   (GET "/auth/whoami" []
         (let [email (whoami)]
-          (edn {:email email :admin? (admin?)})))
+          (edn {:email email :admin? (admin?) :invalid-token? (invalid-token?)})))
   (POST "/auth/register" [email]
         (email/send-registration-email email)
         (edn true))

@@ -8,6 +8,7 @@
 (def email (atom nil))
 (def full-name (atom nil))
 (def admin? (atom false))
+(def invalid-token? (atom nil))
 
 (defn- register-user [user]
   "Register the user's email and name"
@@ -28,5 +29,6 @@
 (GET "/auth/whoami"
      :handler (fn [response]
                 (reset! email (or (:email response) false))
-                (reset! admin? (:admin? response))))
+                (reset! admin? (:admin? response))
+                (reset! invalid-token? (:invalid-token? response))))
 
