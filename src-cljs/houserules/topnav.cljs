@@ -16,4 +16,4 @@
     [toolbar-button "Admin" @admin? "settings" :admin (admin-route)]
     [toolbar-button "Register" (not @email) "user" :register (register-route)]
     [toolbar-button "Sign in" (not @email) "sign.in" :sign-in (sign-in-route)]
-    [toolbar-button (str "Sign out (" (or @email @full-name) ")") @email ":sign.out" :sign-in (sign-out-route)]]])
+    [toolbar-button (str "Sign out (" (or @email @full-name) ")") @email "sign.out" :sign-in (sign-out-route)]]])
