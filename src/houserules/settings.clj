@@ -13,11 +13,13 @@
 (def password (atom nil))
 
 (def secret-key
-  (if (.exists (clojure.java.io/as-file "secret-key"))
-    (byte-array (read-string (slurp "secret-key")))
-    (let [secret-key (byte-array (repeatedly 16 #(rand-int 256)))]
-      (spit "secret-key" (pr-str (vec secret-key)))
-      secret-key)))
+  (String.
+    (if (.exists (clojure.java.io/as-file "secret-key"))
+      (byte-array (read-string (slurp "secret-key")))
+      (let [secret-key (byte-array (repeatedly 16 #(rand-int 256)))]
+        (spit "secret-key" (pr-str (vec secret-key)))
+        secret-key))
+    "UTF-8"))
 
 (defn read-settings []
   (try+

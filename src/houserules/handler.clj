@@ -77,7 +77,7 @@
            ;; add your application routes here
            [auth-routes base-routes app-routes]
            :session-options {:cookie-name "session"
-                             :store (cookie-store settings/secret-key)}
+                             :store (cookie-store (.getBytes settings/secret-key))}
            ;; add custom middleware here
            :middleware (load-middleware)
            :ring-defaults (mk-defaults false)
