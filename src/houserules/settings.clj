@@ -12,6 +12,8 @@
 (def username (atom nil))
 (def password (atom nil))
 
+(def domain (atom nil))
+
 (def secret-key
   (String.
     (if (.exists (clojure.java.io/as-file "secret-key"))
@@ -30,9 +32,12 @@
       (reset! port (get-in data [:smtp :port]))
       (reset! username (get-in data [:smtp :username]))
       (reset! password (get-in data [:smtp :password]))
+      (reset! domain (let [d (:domain data)]
+                       (if (.endsWith d "/")
+                         (.subString d 0 (dec (count d)))
+                         d)))
       true)
     (catch FileNotFoundException _ false)))
-
 
 (defn write-default-settings []
   (spit "settings.yaml" (slurp  (io/resource "default-settings.yaml"))))

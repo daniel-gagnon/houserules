@@ -1,6 +1,6 @@
 (ns houserules.email
   (:require [noir.util.crypt :refer [sha1-sign-hex]]
-            [houserules.settings :refer [secret-key system host port username password]]
+            [houserules.settings :refer [secret-key system host port username password domain]]
             [markdown.core :refer [md-to-html-string]]
             [clojure.java.io :as io]
             [postal.core :refer [send-message]])
@@ -12,7 +12,7 @@
     (str email \~ tomorrow \~ hex)))
 
 (defn send-registration-email [email]
-  (let [link (str "http://houserules.xyz/register/" (make-token email))
+  (let [link (str @domain "/register/" (make-token email))
         smtp-auth {:host @host
                    :user @username
                    :port @port
