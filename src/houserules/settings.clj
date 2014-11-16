@@ -12,10 +12,7 @@
 (def username (atom nil))
 (def password (atom nil))
 
-(declare load-or-create-secret-key)
-(def secret-key (load-or-create-secret-key))
-
-(defn- load-or-create-secret-key []
+(def secret-key
   (if (.exists (clojure.java.io/as-file "secret-key"))
     (byte-array (read-string (slurp "secret-key")))
     (let [secret-key (byte-array (repeatedly 16 #(rand-int 256)))]
