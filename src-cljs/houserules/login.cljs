@@ -26,7 +26,7 @@
 (add-watch current-page (gensym) (fn [_ _ _ page] (when (= page :sign-out) (sign-out))))
 
 (GET "/auth/whoami"
-     :handler (fn [{:keys [email admin]}]
-                (reset! houserules.login/email (or email false))
-                (reset! houserules.login/admin? admin)))
+     :handler (fn [response]
+                (reset! email (or (response "email") false))
+                (reset! admin? (response "admin"))))
 
