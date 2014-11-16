@@ -15,7 +15,7 @@
 (defn admin? []
   (= (session/get :email) @owner))
 
-(defn invalid-token? (session/get :token-invalid))
+(defn invalid-token? [] (session/get :token-invalid))
 
 (defn verify-token [token]
   (session/clear!)

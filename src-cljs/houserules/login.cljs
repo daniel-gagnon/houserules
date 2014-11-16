@@ -27,6 +27,6 @@
 
 (GET "/auth/whoami"
      :handler (fn [response]
-                (reset! email (or (response "email") false))
-                (reset! admin? (response "admin"))))
+                (reset! email (or (:email response) false))
+                (reset! admin? (:admin? response))))
 
