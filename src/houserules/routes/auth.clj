@@ -2,7 +2,8 @@
   (:require [compojure.core :refer :all]
             [houserules.auth :refer [logout whoami admin? verify-token]]
             [houserules.email :as email]
-            [houserules.routes.app :refer [app-page]]))
+            [houserules.routes.app :refer [app-page]]
+            [noir.response :refer [redirect]]))
 
 (defroutes auth-routes
   (POST "/auth/login" [assertion]
@@ -18,6 +19,6 @@
         (email/send-registration-email email)
         {:body true})
   (GET "/register/:token" [token]
-       (do
-         (verify-token token)
+       (if (= (verify-token token) :already-registered)
+         (redirect "/sign/in")
          (app-page))))
