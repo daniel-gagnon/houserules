@@ -1,0 +1,9 @@
+Someone (hopefully you!) tried to register at to the [Houserules LARP Utility](http://houserules.xyz) with the e-mail address [{email}](mailto:{email}).
+
+Please confirm your registration by [clicking on this link]({link}).
+
+If your e-mail client is struggling with HTML e-mails, just copy the following link:
+
+{link}
+
+If you did not expect this e-mail, please disregard it.

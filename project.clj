@@ -27,7 +27,9 @@
    [slingshot "0.12.1"]
    [org.clojure/tools.trace "0.7.8"]
    [joda-time/joda-time "2.5"]
-   [clj-yaml "0.4.0"]]
+   [clj-yaml "0.4.0"]
+   [markdown-clj "0.9.55" :exclusions [com.keminglabs/cljx]]
+   [com.draines/postal "1.11.3"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts

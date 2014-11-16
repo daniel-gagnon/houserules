@@ -1,6 +1,7 @@
 (ns houserules.routes.auth
   (:require [compojure.core :refer :all]
-            [houserules.auth :refer [logout whoami admin?]]))
+            [houserules.auth :refer [logout whoami admin?]]
+            [houserules.email :as email]))
 
 (defroutes auth-routes
   (POST "/auth/login" [assertion]
@@ -13,4 +14,5 @@
         (let [email (whoami)]
           {:body {:email email :admin (admin?)}}))
   (POST "/auth/register" [email]
+        (email/send-registration-email email)
         {:body true}))
