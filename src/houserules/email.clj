@@ -9,7 +9,7 @@
 (defn make-token [email]
   (let [tomorrow (-> (DateTime.) (.plusDays 1) (.getMillis))
         hex (sha1-sign-hex secret-key (str email tomorrow))]
-    (str email \; tomorrow \; hex)))
+    (str email \~ tomorrow \~ hex)))
 
 (defn send-registration-email [email]
   (let [link (str "http://houserules.xyz/register/" (make-token email))

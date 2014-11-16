@@ -18,5 +18,6 @@
         (email/send-registration-email email)
         {:body true})
   (GET "/register/:token" [token]
-       (verify-token token)
-       (app-page)))
+       (do
+         (verify-token token)
+         (app-page))))
