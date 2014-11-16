@@ -17,3 +17,4 @@ node_modules/
 .sass-cache/
 resources/public/css/
 settings.yaml
+secret-key
