@@ -14,7 +14,8 @@
             [cronj.core :as cronj]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [houserules.database.bdb :refer [migrate shutdown-database db-get put with-transaction]]
-            [houserules.settings :as settings]))
+            [houserules.settings :as settings]
+            [clojure.java.io :as io]))
 
 (defroutes base-routes
   (route/resources "/static/"))
@@ -75,8 +76,8 @@
 (def app (app-handler
            ;; add your application routes here
            [auth-routes base-routes app-routes]
-           :session-options {:cookie-name "houserules-session"
-                             :store (cookie-store)}
+           :session-options {:cookie-name "session"
+                             :store (cookie-store settings/secret-key)}
            ;; add custom middleware here
            :middleware (load-middleware)
            :ring-defaults (mk-defaults false)

@@ -1,15 +1,26 @@
 (ns houserules.settings
   (:require [clojure.java.io :as io]
             [clj-yaml.core :as yaml]
-            [slingshot.slingshot :refer [try+]])
+            [slingshot.slingshot :refer [try+ throw+]])
   (:import [java.io FileNotFoundException]))
 
 (def owner (atom nil))
 (def system (atom nil))
+
 (def host (atom nil))
 (def port (atom nil))
 (def username (atom nil))
 (def password (atom nil))
+
+(declare load-or-create-secret-key)
+(def secret-key (load-or-create-secret-key))
+
+(defn- load-or-create-secret-key []
+  (if (.exists (clojure.java.io/as-file "secret-key"))
+    (byte-array (read-string (slurp "secret-key")))
+    (let [secret-key (byte-array (repeatedly 16 #(rand-int 256)))]
+      (spit "secret-key" (pr-str (vec secret-key)))
+      secret-key)))
 
 (defn read-settings []
   (try+

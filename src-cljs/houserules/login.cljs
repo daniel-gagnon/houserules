@@ -20,7 +20,7 @@
   (reset! email false)
   (reset! full-name nil)
   (reset! admin? false)
-  (cookies/remove! :houserules-session)
+  (cookies/remove! :session)
   (navigate-to "/"))
 
 (add-watch current-page (gensym) (fn [_ _ _ page] (when (= page :sign-out) (sign-out))))
