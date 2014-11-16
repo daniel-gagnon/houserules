@@ -34,4 +34,4 @@
           (session/put! :email email)
           :token-valid)
 
-        :else ((do (session/put! :token-invalid true) :token-invalid))))))
+        :else (do (session/put! :token-invalid true) :token-invalid)))))
