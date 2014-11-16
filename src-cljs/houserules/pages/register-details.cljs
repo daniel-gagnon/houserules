@@ -10,5 +10,8 @@
     [:p (if-not @invalid-token? "Please complete your registration." "Your token is invalid or has expired.")]]
    [:div.ui.form.attached.fluid.segment
     (if-not @invalid-token?
-             [:input {:placeholder "Name" :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
-             [:p "Please try registering again."])]])
+      [:div.ui.form
+       [:input {:placeholder "Name" :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
+       [:input {:placeholder "Password" :type :password}]
+       [:button.ui.green.button "Complete Registration"]]
+      [:p "Please try registering again."])]])
