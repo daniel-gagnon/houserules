@@ -4,7 +4,8 @@
             [houserules.routes :refer [current-page]]
             [houserules.topnav :refer [top-nav]]
             [houserules.pages.profile :refer [profile]]
-            [houserules.pages.register :refer [register]]))
+            [houserules.pages.register :refer [register]]
+            [houserules.pages.register-details :refer [register-details]]))
 
 (defn welcome-message []
   (when (not (nil? @email))
@@ -22,6 +23,7 @@
      (case @current-page
        :home [:h1 "Home"]
        :profile [profile]
+       :register-details [register-details]
        :admin [:h1 "Admin"]
        nil)
      (case @current-page
