@@ -2,8 +2,10 @@ Someone (hopefully you!) tried to register at to the [Houserules LARP Utility](h
 
 Please confirm your registration by [clicking on this link]({link}).
 
-If your e-mail client is struggling with HTML e-mails, just copy the following link:
+If your e-mail client is struggling with HTML e-mails, just copy the following link in your browser:
 
 {link}
+
+This link will expire after 24 hours.
 
 If you did not expect this e-mail, please disregard it.
