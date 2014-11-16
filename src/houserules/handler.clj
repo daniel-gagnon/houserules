@@ -17,7 +17,7 @@
             [houserules.settings :as settings]
             [clojure.java.io :as io]))
 
-(defroutes base-routes
+(defroutes static-routes
   (route/resources "/static/"))
 
 (defn init
@@ -75,7 +75,7 @@
 
 (def app (app-handler
            ;; add your application routes here
-           [auth-routes base-routes app-routes]
+           [auth-routes static-routes app-routes]
            :session-options {:cookie-name "session"
                              :store (cookie-store (.getBytes settings/secret-key))}
            ;; add custom middleware here
