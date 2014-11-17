@@ -17,11 +17,14 @@
 
 (defn invalid-token? [] (session/get :token-invalid))
 
+(defn get-user [email]
+  (db-get email :database :users :default nil))
+
 (defn verify-token [token]
   (session/clear!)
   (let [[email date hash] (.split token "~")
         valid-hash (sha1-sign-hex secret-key (str email date))]
-    (let [user (db-get email :database :users :default nil)]
+    (let [user (get-user email)]
       (cond
         user :already-registered
 
