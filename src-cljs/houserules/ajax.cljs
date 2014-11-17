@@ -8,5 +8,5 @@
 (def HEAD  ajax.core/HEAD)
 (def GET ajax.core/GET)
 
-(defn POST [url & {:keys [headers] :as options}]
+(defn POST [url {:keys [headers] :as options}]
   (ajax.core/POST url (assoc options :headers (merge headers {:X-CSRF-Token @xsrf-token}))))
