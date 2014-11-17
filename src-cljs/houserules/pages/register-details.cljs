@@ -24,9 +24,9 @@
        [:div.ui.form.attached.fluid.segment
         (if-not @invalid-token?
           [:div.ui.form
-           [:input {:placeholder "Name" :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
-           [:input {:placeholder "Password" :type :password :on-change #(reset! password (-> % .-target .-value))}]
+           [:input.ui.input {:placeholder "Name" :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
+           [:input.ui.input {:placeholder "Password" :type :password :on-change #(reset! password (-> % .-target .-value))}]
            [password-strength @strength]
            [:a {:href "http://xkcd.com/936/" :target "_blank"} "Advices for picking a strong and easy to remember password"]
-           [:button.ui.green.button "Complete Registration"]]
+           [(keyword (str "button.ui.green.button" (when (< @strength 2) ".disabled"))) {:disabled (< @strength 2)} "Complete Registration"]]
           [:p "Please try registering again."])]])))
