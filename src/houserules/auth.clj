@@ -30,7 +30,7 @@
           (re-seq #"^\d+$" date)
           (>= (Long/parseLong date) (.getMillis (DateTime.))))
         (do
-          (put :users email nil)
+          (put :users email {})
           (session/put! :email email)
           :token-valid)
 
