@@ -1,6 +1,6 @@
 (ns houserules.login
   (:require [reagent.core :as reagent :refer [atom]]
-            [ajax.core :refer [GET POST]]
+            [houserules.ajax :refer [GET]]
             [houserules.routes :refer [navigate-to current-page]]
             [reagent.cookies :as cookies]))
 
@@ -31,4 +31,3 @@
                 (reset! email (or (:email response) false))
                 (reset! admin? (:admin? response))
                 (reset! invalid-token? (:invalid-token? response))))
-

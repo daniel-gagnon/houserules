@@ -1,6 +1,6 @@
 (ns houserules.pages.register-details
   (:require [reagent.core :as reagent :refer [atom]]
-            [ajax.core :refer [POST]]
+            [houserules.ajax :refer [POST]]
             [houserules.login :refer [full-name invalid-token? email]]
             [houserules.messages :refer [add-message]]
             [houserules.routes :refer [navigate-to home-route]]))

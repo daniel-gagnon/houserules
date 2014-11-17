@@ -1,6 +1,6 @@
 (ns houserules.pages.register
   (:require [reagent.core :as reagent :refer [atom]]
-            [ajax.core :refer [POST]]))
+            [houserules.ajax :refer [POST]]))
 
 (defn- fill-email [email-atom]
   (let [data (atom "")]
