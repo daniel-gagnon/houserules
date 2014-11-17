@@ -80,7 +80,7 @@
                              :store (cookie-store (.getBytes settings/secret-key))}
            ;; add custom middleware here
            :middleware (load-middleware)
-           :ring-defaults (mk-defaults false)
+           :ring-defaults (mk-defaults true)
            ;; add access rules here
            :access-rules []
            ;; serialize/deserialize the following data formats
