@@ -13,3 +13,18 @@
 
 (defn POST [url options]
   (ajax.core/POST url (add-xsrf-token options)))
+
+(defn PUT [url options]
+  (ajax.core/PUT url (add-xsrf-token options)))
+
+(defn DELETE [url options]
+  (ajax.core/DELETE url (add-xsrf-token options)))
+
+(defn OPTIONS [url options]
+  (ajax.core/OPTIONS url (add-xsrf-token options)))
+
+(defn TRACE [url options]
+  (ajax.core/TRACE url (add-xsrf-token options)))
+
+(defn PATCH [url options]
+  (ajax.core/PATCH url (add-xsrf-token options)))
