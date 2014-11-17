@@ -1,7 +1,9 @@
 (ns houserules.pages.register-details
   (:require [reagent.core :as reagent :refer [atom]]
             [ajax.core :refer [POST]]
-            [houserules.login :refer [full-name invalid-token? email]]))
+            [houserules.login :refer [full-name invalid-token? email]]
+            [houserules.messages :refer [add-message]]
+            [houserules.routes :refer [navigate-to home-route]]))
 
 (defn password-strength [strength]
   [:div.ui.bottom.attached.progress
@@ -11,6 +13,10 @@
 (defn compute-strength [password]
   (let [zxcvbn-score (js/zxcvbn password (js/Array @full-name @email))]
     (.-score zxcvbn-score)))
+
+(defn register []
+  (add-message :success "Registration complete" [:p "Welcome to Houserules!"])
+  (navigate-to (home-route)))
 
 (defn register-details []
   (let [password (atom "")
@@ -28,5 +34,7 @@
            [:input.ui.input {:placeholder "Password" :type :password :on-change #(reset! password (-> % .-target .-value))}]
            [password-strength @strength]
            [:a {:href "http://xkcd.com/936/" :target "_blank"} "Advices for picking a strong and easy to remember password"]
-           [(keyword (str "button.ui.green.button" (when (< @strength 2) ".disabled"))) {:disabled (< @strength 2)} "Complete Registration"]]
+           [(keyword (str "button.ui.green.button"(when (< @strength 2) ".disabled")))
+            {:disabled (< @strength 2) :on-click register}
+            "Complete Registration"]]
           [:p "Please try registering again."])]])))
