@@ -1,6 +1,6 @@
 (ns houserules.login
   (:require [reagent.core :as reagent :refer [atom]]
-            [houserules.ajax :refer [GET]]
+            [houserules.ajax :refer [GET POST]]
             [houserules.routes :refer [navigate-to current-page]]
             [reagent.cookies :as cookies]))
 
@@ -18,11 +18,12 @@
 
 
 (defn sign-out []
-  (reset! email false)
-  (reset! full-name nil)
-  (reset! admin? false)
-  (cookies/remove! :session)
-  (navigate-to "/"))
+  (POST "/auth/logout"
+        {:handler (fn [_]
+                    (reset! email false)
+                    (reset! full-name nil)
+                    (reset! admin? false)
+                    (navigate-to "/"))}))
 
 (add-watch current-page (gensym) (fn [_ _ _ page] (when (= page :sign-out) (sign-out))))
 
