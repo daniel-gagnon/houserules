@@ -14,13 +14,15 @@
   (let [zxcvbn-score (js/zxcvbn password (js/Array @full-name @email))]
     (.-score zxcvbn-score)))
 
-(defn register []
+(defn register [password in-flight]
+  ; (POST "/auth/")
   (add-message :success "Registration complete" [:p "Welcome to Houserules!"])
   (navigate-to (home-route)))
 
 (defn register-details []
   (let [password (atom "")
-        strength (atom 0)]
+        strength (atom 0)
+        in-flight (atom false)]
     (add-watch password (gensym) (fn [_ _ _ pass]  (reset! strength (compute-strength pass))))
     (fn []
       [:div#register-details
@@ -30,11 +32,11 @@
        [:div.ui.form.attached.fluid.segment
         (if-not @invalid-token?
           [:div.ui.form
-           [:input.ui.input {:placeholder "Name" :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
-           [:input.ui.input {:placeholder "Password" :type :password :on-change #(reset! password (-> % .-target .-value))}]
+           [:input.ui.input {:placeholder "Name" :disabled @in-flight :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
+           [:input.ui.input {:placeholder "Password" :disabled @in-flight :type :password :on-change #(reset! password (-> % .-target .-value))}]
            [password-strength @strength]
            [:a {:href "http://xkcd.com/936/" :target "_blank"} "Advices for picking a strong and easy to remember password"]
            [(keyword (str "button.ui.green.button"(when (< @strength 2) ".disabled")))
-            {:disabled (< @strength 2) :on-click register}
+            {:disabled (< @strength 2) :on-click #(register password in-flight)}
             "Complete Registration"]]
           [:p "Please try registering again."])]])))
