@@ -6,6 +6,7 @@
             [houserules.messages :refer [messages]]
             [houserules.pages.profile :refer [profile]]
             [houserules.pages.register :refer [register]]
+            [houserules.pages.sign-in :refer [sign-in]]
             [houserules.pages.register-details :refer [register-details]]))
 
 (defn welcome-message []
@@ -29,6 +30,7 @@
        :admin [:h1 "Admin"]
        nil)
      (case @current-page
+       :sign-in [sign-in]
        :register [register]
        :register-details [register-details]
        [welcome-message]))])
