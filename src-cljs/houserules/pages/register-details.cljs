@@ -1,6 +1,6 @@
 (ns houserules.pages.register-details
   (:require [reagent.core :as reagent :refer [atom]]
-            [houserules.ajax :refer [POST]]
+            [houserules.ajax :refer [PUT]]
             [houserules.login :refer [full-name invalid-token? email]]
             [houserules.messages :refer [add-message]]
             [houserules.routes :refer [navigate-to home-route]]))
@@ -15,9 +15,13 @@
     (.-score zxcvbn-score)))
 
 (defn register [password in-flight]
-  ; (POST "/auth/")
-  (add-message :success "Registration complete" [:p "Welcome to Houserules!"])
-  (navigate-to (home-route)))
+  (reset! in-flight true)
+  (PUT "/profiles/update"
+       {:params {:name @full-name :password @password}
+        :handler #(do
+                   (reset! in-flight false)
+                   (add-message :success "Registration complete" [:p "Welcome to Houserules!"])
+                   (navigate-to (home-route)))}))
 
 (defn register-details []
   (let [password (atom "")
