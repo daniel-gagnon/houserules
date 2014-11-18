@@ -1,6 +1,7 @@
 (ns houserules.routes.profiles
   (:require [compojure.core :refer :all]
-            [houserules.profiles :refer [update-profile]]))
+            [houserules.profiles :refer [update-profile]]
+            [noir.response :refer [edn]]))
 
 (defroutes profile-routes
    (PUT "/profiles/update" [data]
