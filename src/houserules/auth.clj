@@ -1,7 +1,5 @@
 (ns houserules.auth
-  (:require [org.httpkit.client :as http]
-            [clojure.data.json :as json]
-            [noir.session :as session]
+  (:require [noir.session :as session]
             [houserules.database.bdb :refer [db-get]]
             [houserules.settings :refer [owner secret-key]]
             [noir.util.crypt :refer [sha1-sign-hex]]
