@@ -1,15 +1,19 @@
 (ns houserules.routes.auth
   (:require [compojure.core :refer :all]
-            [houserules.auth :refer [logout whoami admin? verify-token invalid-token? get-user]]
+            [houserules.auth :refer [logout whoami admin? verify-token invalid-token? get-user verify-password]]
             [houserules.email :as email]
             [houserules.routes.app :refer [app-page]]
-            [noir.response :refer [redirect edn]]
-            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+            [noir.response :refer [redirect edn status]]
+            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
+            [noir.session :as session]))
 
 (defroutes auth-routes
-  (POST "/auth/login" [assertion]
-        (let [email nil]
-          {:body {:email email :admin (admin?)} :status (if email 200 403)}))
+  (POST "/auth/login" [{:keys [email password]}]
+        (if (verify-password email password)
+          (do
+            (session/put! :email email)
+            (edn (:email email :admin (admin?))))
+          (status 403 (edn false))))
   (POST "/auth/logout" []
         (logout)
         (edn true))

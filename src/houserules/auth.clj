@@ -2,7 +2,7 @@
   (:require [noir.session :as session]
             [houserules.database.bdb :refer [db-get]]
             [houserules.settings :refer [owner secret-key]]
-            [noir.util.crypt :refer [sha1-sign-hex]]
+            [noir.util.crypt :refer [sha1-sign-hex compare]]
             [houserules.database.bdb :refer [db-get put]])
   (:import [org.joda.time DateTime]))
 
@@ -36,3 +36,6 @@
           :token-valid)
 
         :else (do (session/put! :token-invalid true) :token-invalid)))))
+
+(defn verify-password [email password]
+  (compare password (:password (db-get email :database :users :default nil))))
