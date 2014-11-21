@@ -5,8 +5,7 @@
 
 (defn update-profile [options]
   (with-transaction
-    (with-database
-      :users
+    (with-database :users
       (let [email (session/get :email)]
         (put email
              (merge
