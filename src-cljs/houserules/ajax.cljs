@@ -25,6 +25,3 @@
 
 (defn TRACE [url options]
   (ajax.core/TRACE url (add-xsrf-token options)))
-
-(defn PATCH [url options]
-  (ajax.core/PATCH url (add-xsrf-token options)))
