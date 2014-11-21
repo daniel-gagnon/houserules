@@ -8,7 +8,7 @@
             [noir.session :as session]))
 
 (defroutes auth-routes
-  (POST "/auth/login" [{:keys [email password]}]
+  (POST "/auth/login" [email password]
         (if (verify-password email password)
           (do
             (session/put! :email email)
