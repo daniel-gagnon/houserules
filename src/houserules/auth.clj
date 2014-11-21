@@ -1,4 +1,5 @@
 (ns houserules.auth
+  (:refer-clojure :exclude [compare])
   (:require [noir.session :as session]
             [houserules.database.bdb :refer [db-get]]
             [houserules.settings :refer [owner secret-key]]
