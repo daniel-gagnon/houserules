@@ -2,6 +2,7 @@
   (:require [compojure.core :refer [defroutes]]
             [houserules.routes.app :refer [app-routes]]
             [houserules.routes.auth :refer [auth-routes]]
+            [houserules.routes.profiles :refer [profile-routes]]
             [houserules.middleware :refer [load-middleware]]
             [noir.response :refer [redirect]]
             [noir.util.middleware :refer [app-handler]]
@@ -75,7 +76,7 @@
 
 (def app (app-handler
            ;; add your application routes here
-           [auth-routes static-routes app-routes]
+           [auth-routes profile-routes static-routes app-routes]
            :session-options {:cookie-name "session"
                              :store (cookie-store (.getBytes settings/secret-key))}
            ;; add custom middleware here
