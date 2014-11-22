@@ -39,5 +39,5 @@
         :else (do (session/put! :token-invalid true) :token-invalid)))))
 
 (defn verify-password [email password]
-  (when-let [user (db-get email :database :users :default nil)]
-    (compare password (:password user))))
+  (when-let [db-password (:password (db-get email :database :users :default nil))]
+    (compare password db-password)))
