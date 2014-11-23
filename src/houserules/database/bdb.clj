@@ -95,10 +95,10 @@
          {'put '.put, 'put-no-overwrite '.putNoOverwrite, 'put-no-dup-data '.putNoDupData}))
 
 (defn db-get
-  ([key & {:keys [database default] :as kwargs :or {:database *database*}}]
+  ([key & {:keys [database default] :or {database *database*} :as kwargs}]
     (assert (keyword? database))
     (assert (database @databases))
-   (letfn [(inner-fn
+    (letfn [(inner-fn
              [database key]
              (let [tmp-entry (DatabaseEntry.)
                    result (enum->keyword (.get (database @databases) *transaction* (clj->entry key) tmp-entry LockMode/DEFAULT))]
@@ -109,7 +109,7 @@
                    {:error result
                     :database database
                     :key key}))))]
-     (if *transaction*
+      (if *transaction*
        (inner-fn database key)
        (with-transaction (inner-fn database key))))))
 
