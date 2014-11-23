@@ -2,7 +2,8 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [houserules.ajax :refer [GET POST]]
             [houserules.routes :refer [navigate-to current-page]]
-            [reagent.cookies :as cookies]))
+            [reagent.cookies :as cookies]
+            [houserules.messages :refer [msgs]]))
 
 ;; Email is nil (we don't know yet if the user is logged), false (the user is falsed) or a string with the email
 (def email (atom nil))
@@ -23,6 +24,7 @@
                     (reset! email false)
                     (reset! full-name nil)
                     (reset! admin? false)
+                    (reset! msgs [])
                     (navigate-to "/"))}))
 
 (add-watch current-page (gensym) (fn [_ _ _ page] (when (= page :sign-out) (sign-out))))
