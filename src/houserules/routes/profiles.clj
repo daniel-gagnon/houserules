@@ -4,6 +4,6 @@
             [noir.response :refer [edn]]))
 
 (defroutes profile-routes
-   (PUT "/profiles/update" [data]
-        (update-profile data)
+   (PUT "/profiles/update" request
+        (update-profile (:params request))
         (edn true)))
