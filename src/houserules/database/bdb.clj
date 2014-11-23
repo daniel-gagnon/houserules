@@ -96,7 +96,8 @@
 
 (defn db-get
   ([key & {:keys [database default] :as kwargs :or {:database *database*}}]
-   (assert (and (keyword? database) (database @databases)))
+    (assert (keyword? database))
+    (assert (database @databases))
    (letfn [(inner-fn
              [database key]
              (let [tmp-entry (DatabaseEntry.)
