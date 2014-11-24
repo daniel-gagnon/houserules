@@ -12,7 +12,7 @@
         (if (verify-password email password)
           (do
             (session/put! :email email)
-            (edn (:email email :admin (admin?))))
+            (edn {:email email :admin (admin?)}))
           (status 403 (edn false))))
   (POST "/auth/logout" []
         (logout)
