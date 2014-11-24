@@ -2,14 +2,15 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [clojure.string :as string]
             [houserules.ajax :refer [POST]]
-            [houserules.login :refer [register-user]]))
+            [houserules.login :refer [register-user]]
+            [houserules.routes :refer [navigate-to home-route]]))
 
 (defn- send-login [email password in-flight]
   (reset! in-flight true)
   (POST "/auth/login"
     {:params {:email email
               :password password}
-     :handler register-user
+     :handler #(do (register-user %) (navigate-to (home-route)))
      :handle-error #(println %1 %2)}))
 
 (defn sign-in []
