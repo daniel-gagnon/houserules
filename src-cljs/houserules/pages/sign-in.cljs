@@ -25,4 +25,5 @@
        [:div.ui.form.attached.fluid.segment
         [:input.ui.input {:placeholder "Email" :disabled @in-flight :auto-focus true :on-change #(reset! email (string/trim (-> % .-target .-value)))}]
         [:input.ui.input {:placeholder "Password" :type :password :disabled @in-flight :on-change #(reset! password (-> % .-target .-value))}]
+        [(keyword (str "button#forgot-password.ui.green.button" (when (re-find #".+@.+\..+" @email) ".disabled"))) "I forgot my password"]
         [(if-not (disable-button) :button.ui.green.button :button.ui.green.button.disabled) {:disabled (disable-button) :on-click #(do (send-login @email @password in-flight))} "Login"]]])))
