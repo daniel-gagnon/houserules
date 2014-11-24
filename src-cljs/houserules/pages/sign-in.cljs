@@ -1,14 +1,15 @@
 (ns houserules.pages.sign-in
   (:require [reagent.core :as reagent :refer [atom]]
             [clojure.string :as string]
-            [houserules.ajax :refer [POST]]))
+            [houserules.ajax :refer [POST]]
+            [houserules.login :refer [register-user]]))
 
 (defn- send-login [email password in-flight]
   (reset! in-flight true)
   (POST "/auth/login"
     {:params {:email email
               :password password}
-     :handler #(println %)
+     :handler register-user
      :handle-error #(println %1 %2)}))
 
 (defn sign-in []

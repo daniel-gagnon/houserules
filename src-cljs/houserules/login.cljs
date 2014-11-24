@@ -13,9 +13,9 @@
 
 (defn- register-user [user]
   "Register the user's email and name"
-  (reset! email (user "email"))
-  (reset! full-name (user "name"))
-  (reset! admin? (user "admin")))
+  (reset! email (:email user))
+  (reset! full-name (:name user))
+  (reset! admin? (:admin? user)))
 
 
 (defn sign-out []
