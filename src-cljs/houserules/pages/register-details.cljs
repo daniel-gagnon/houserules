@@ -40,7 +40,7 @@
            [:input.ui.input {:placeholder "Password" :disabled @in-flight :type :password :on-change #(reset! password (-> % .-target .-value))}]
            [password-strength @strength]
            [:a {:href "http://xkcd.com/936/" :target "_blank"} "Advices for picking a strong and easy to remember password"]
-           [(keyword (str "button.ui.green.button"(when (< @strength 2) ".disabled")))
+           [(keyword (str "button.ui.primary.button"(when (< @strength 2) ".disabled")))
             {:disabled (< @strength 2) :on-click #(register password in-flight)}
             "Complete Registration"]]
           [:p "Please try registering again."])]])))
