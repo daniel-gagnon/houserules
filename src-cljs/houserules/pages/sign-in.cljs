@@ -29,7 +29,7 @@
           [:div.ui.error.message
            [:div.header "Error"]
            [:p "Email or password incorrect"]])
-        [:input#email.ui.input {:value @email :placeholder "Email" :disabled @in-flight :auto-focus true :on-change #(do (reset! error false) (reset! email (string/trim (-> % .-target .-value)))) :on-key-down #(when (= 13 (.-keyCode %)) (login))}]
+        [:input#email.ui.input {:value @email :placeholder "Email" :disabled @in-flight :auto-focus true :on-change #(do (reset! error false) (reset! email (string/trim (-> % .-target .-value))))}]
         [:input#password.ui.input {:value @password :placeholder "Password" :type :password :disabled @in-flight :on-change #(do (reset! error false) (reset! password (-> % .-target .-value))) :on-key-down #(when (= 13 (.-keyCode %)) (login))}]
         [(keyword (str "button#forgot-password.ui.button" (when (or (not (re-find #".+@.+\..+" @email)) @in-flight) ".disabled"))) {:disabled (or (not (re-find #".+@.+\..+" @email)) @in-flight)} "I forgot my password"]
         [(if-not (disable-button) :button.ui.primary.button :button.ui.primary.button.disabled) {:disabled (disable-button) :on-click login} "Login"]]])))
