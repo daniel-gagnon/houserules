@@ -34,7 +34,7 @@ gulp.task('prefix', ['sass'], function() {
             .pipe(gulp.dest('resources/public/css/'));
 });
 
-gulp.task('watch', ['prefix'], function(cb) {
+gulp.task('watch', ['prefix', 'copy-themes'], function(cb) {
     gulp.watch(['resources/public/sass/*.sass', 'resources/public/sass/*.scss'], ['prefix']);
 });
 
@@ -45,9 +45,12 @@ gulp.task('minify', ['prefix'], function() {
         .pipe(gulp.dest('resources/public/css/'));
 });
 
+gulp.task('copy-themes', function() {
+    return gulp.src('resources/themes/**')
+        .pipe(gulp.dest('resources/public/css/themes/'))
+});
 
-
-gulp.task('build', ['clean', 'minify'], function (cb) {
+gulp.task('build', ['clean', 'minify', 'copy-themes'], function (cb) {
   exec('lein ring uberjar', function (err, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
