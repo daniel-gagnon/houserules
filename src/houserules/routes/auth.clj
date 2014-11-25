@@ -9,11 +9,13 @@
 
 (defroutes auth-routes
   (POST "/auth/login" [email password]
-        (if (verify-password email password)
-          (do
-            (session/put! :email email)
-            (edn (assoc (get-user email) :email email :admin (admin?))))
-          (status 403 (edn false))))
+        (if-not (get-user email)
+          (status 403 (edn {:error :user-doesn't-exist}))
+          (if (verify-password email password)
+            (do
+              (session/put! :email email)
+              (edn (assoc (get-user email) :email email :admin (admin?))))
+            (status 403 (edn {:error :password-error})))))
   (POST "/auth/logout" []
         (logout)
         (edn true))
