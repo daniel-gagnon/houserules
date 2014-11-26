@@ -29,4 +29,4 @@
                           (when header
                             [:div.header header])
                           content])
-    (js/setTimeout #(remove-message notifications id) 3000)))
+    (js/setTimeout #(remove-message notifications id) 5000)))
