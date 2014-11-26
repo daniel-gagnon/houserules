@@ -16,54 +16,12 @@ body, html
 .container
   +container
 
-#profile-panel
-  +span(3)
-  input
-    width: 100%
-  #picture-chooser
-    float: left
-    #picture-placeholder
-      width: 160px
-      height: 160px
-      background-color: white
-      border-style: solid
-      border-width: 1px
-      border-color: black
-    button
-      width: 160px
-  #contact
-    width: calc(100% - 160px - #{gutter(3)})
-    float: right
-
 =centered
   position: absolute
   top: 50%
   left: 50%
   transform: translate(-50%, -50%)
 
-#register, #register-details, #sign-in
-  +span(4)
-  +centered
-  input
-    width: 100%
-    padding: 0.65em 1em
-    margin-top: 0.25em
-  button
-    +span(2 of 4)
-    float: right
-    margin-top: 0.5em
-    margin-right: 0
-  #forgot-password
-    float: left
-  a
-    display: block
-    margin-top: 1em
-    margin-bottom: 1em
-
-#notifications
-  position: fixed
-  bottom: gutter()
-  right: gutter()
-  min-width: span(3)
-  .message
-    display: block
+@import profile
+@import auth
+@import messages
