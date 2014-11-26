@@ -2,7 +2,7 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [houserules.ajax :refer [PUT]]
             [houserules.login :refer [full-name invalid-token? email]]
-            [houserules.messages :refer [add-message]]
+            [houserules.messages :refer [add-notification]]
             [houserules.routes :refer [navigate-to home-route]]))
 
 (defn password-strength [strength]
@@ -20,7 +20,7 @@
        {:params {:name @full-name :password @password}
         :handler #(do
                    (reset! in-flight false)
-                   (add-message :success "Registration complete" [:p "Welcome to Houserules!"])
+                   (add-notification :success "Registration complete" [:p "Welcome to Houserules!"])
                    (navigate-to (home-route)))}))
 
 (defn register-details []
