@@ -36,7 +36,7 @@
        [:div.ui.form.attached.fluid.segment
         (if-not @invalid-token?
           [:div.ui.form
-           [:input.ui.input {:placeholder "Name" :disabled @in-flight :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
+           [:input.ui.input {:type :text :placeholder "Name" :disabled @in-flight :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
            [:input.ui.input {:placeholder "Password" :disabled @in-flight :type :password :on-change #(reset! password (-> % .-target .-value))}]
            [password-strength @strength]
            [:a {:href "http://xkcd.com/936/" :target "_blank"} "Advices for picking a strong and easy to remember password"]
