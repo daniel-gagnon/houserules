@@ -3,7 +3,7 @@
             [houserules.login :refer [email]]
             [houserules.routes :refer [current-page]]
             [houserules.topnav :refer [top-nav]]
-            [houserules.messages :refer [messages-area]]
+            [houserules.messages :refer [messages-area notifications-area]]
             [houserules.pages.profile :refer [profile]]
             [houserules.pages.register :refer [register]]
             [houserules.pages.sign-in :refer [sign-in]]
@@ -33,7 +33,8 @@
        :sign-in [sign-in]
        :register [register]
        :register-details [register-details]
-       [welcome-message]))])
+       [welcome-message]))
+   [notifications-area]])
 
 (defn init! []
   (reagent/render-component [site] (.getElementById js/document "app")))
