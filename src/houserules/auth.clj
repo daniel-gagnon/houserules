@@ -22,7 +22,7 @@
 (defn verify-token [token]
   (session/clear!)
   (let [[email date hash] (.split token "~")
-        valid-hash (sha1-sign-hex secret-key (str email date))]
+        valid-hash (sha1-sign-hex secret-key (str email date (:password (get-user email))))]
     (let [user (get-user email)]
       (cond
         user :already-registered

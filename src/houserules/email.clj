@@ -3,12 +3,13 @@
             [houserules.settings :refer [secret-key system host port username password domain]]
             [markdown.core :refer [md-to-html-string]]
             [clojure.java.io :as io]
-            [postal.core :refer [send-message]])
+            [postal.core :refer [send-message]]
+            [houserules.auth :refer [get-user]])
   (:import [org.joda.time DateTime]))
 
 (defn make-token [email]
   (let [tomorrow (-> (DateTime.) (.plusDays 1) (.getMillis))
-        hex (sha1-sign-hex secret-key (str email tomorrow))]
+        hex (sha1-sign-hex secret-key (str email tomorrow (:password (get-user email))))]
     (str email \~ tomorrow \~ hex)))
 
 (defn smtp-auth []
