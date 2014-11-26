@@ -32,4 +32,7 @@
   (GET "/register/:token" [token]
        (if (= (verify-token token) :already-registered)
          (redirect "/sign/in")
-         (app-page))))
+         (app-page)))
+  (POST "/reset-password" [email]
+        (email/send-password-reset-email email)
+        (edn true)))
