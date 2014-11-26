@@ -3,7 +3,7 @@
             [houserules.login :refer [email]]
             [houserules.routes :refer [current-page]]
             [houserules.topnav :refer [top-nav]]
-            [houserules.messages :refer [messages]]
+            [houserules.messages :refer [messages-area]]
             [houserules.pages.profile :refer [profile]]
             [houserules.pages.register :refer [register]]
             [houserules.pages.sign-in :refer [sign-in]]
@@ -21,7 +21,7 @@
   []
   [:div.container
    [top-nav]
-   [messages]
+   [messages-area]
    (if @email
      (case @current-page
        :home [:h1 "Home"]
