@@ -12,7 +12,7 @@
 
 (defn compute-strength [password]
   (let [zxcvbn-score (js/zxcvbn password (js/Array @full-name @email))]
-    (.-score zxcvbn-score)))
+    (aget zxcvbn-score "score")))
 
 (defn register [password in-flight]
   (reset! in-flight true)
