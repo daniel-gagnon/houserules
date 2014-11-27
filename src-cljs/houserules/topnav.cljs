@@ -11,7 +11,7 @@
   "Navigation on top"
   []
   [:nav.ui.menu [toolbar-button "Home" @email "home" :home (home-route)]
-   [:nav.right.menu
+   [:div.right.menu
     [toolbar-button "Profile" @email "user" :profile (profile-route)]
     [toolbar-button "Admin" @admin? "settings" :admin (admin-route)]
     [toolbar-button "Register" (not @email) "user" :register (register-route)]
