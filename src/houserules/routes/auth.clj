@@ -34,5 +34,8 @@
          (redirect "/sign/in")
          (app-page)))
   (POST "/reset-password" [email]
-        (email/send-password-reset-email email)
-        (edn true)))
+        (if (get-user email)
+          (do
+            (email/send-password-reset-email email)
+            (edn true))
+          (edn false))))
