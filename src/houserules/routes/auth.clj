@@ -38,4 +38,4 @@
           (do
             (email/send-password-reset-email email)
             (edn true))
-          (edn false))))
+          (status 403 (edn false)))))

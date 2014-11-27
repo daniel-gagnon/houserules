@@ -16,8 +16,13 @@
                                   :user-doesn't-exist email-error
                                   :password-error password-error) true))}))
 
-(defn- reset-password [email]
-  (POST "/reset-password" {:params {:email email}}))
+(defn- reset-password [email in-flight email-error reset-password-sent]
+  (reset! in-flight true)
+  (POST "/reset-password" {:params {:email email}
+                           :handler #(reset! reset-password-sent true)
+                           :error-handler #(do
+                                            (reset! in-flight false)
+                                            (reset! email-error true))}))
 
 (defn sign-in []
   (let [email (atom "")
@@ -41,5 +46,5 @@
             [:input#email.ui {:value @email :placeholder "Email" :type :text :disabled @in-flight :auto-focus true :on-change #(do (clear-errors) (reset! email (string/trim (-> % .-target .-value))))}]]
            [(if-not @password-error :div.field :div.field.error)
             [:input#password.ui {:value @password :placeholder "Password" :type :password :disabled @in-flight :on-change #(do (clear-errors) (reset! password (-> % .-target .-value))) :on-key-down #(when (= 13 (.-keyCode %)) (login))}]]
-           [(keyword (str "button#forgot-password.ui.button" (when (or (not (re-find #".+@.+\..+" @email)) @in-flight) ".disabled"))) {:disabled (or (not (re-find #".+@.+\..+" @email)) @in-flight) :on-click #(do (reset! reset-password-sent true) (reset-password @email))} "I forgot my password"]
+           [(keyword (str "button#forgot-password.ui.button" (when (or (not (re-find #".+@.+\..+" @email)) @in-flight) ".disabled"))) {:disabled (or (not (re-find #".+@.+\..+" @email)) @in-flight) :on-click #(reset-password @email in-flight email-error reset-password-sent)} "I forgot my password"]
            [(if-not (disable-button) :button.ui.primary.button :button.ui.primary.button.disabled) {:disabled (disable-button) :on-click login} "Login"]])]])))
