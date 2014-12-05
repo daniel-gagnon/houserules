@@ -1,3 +1,5 @@
+@import susy
+
 #register, #register-details, #sign-in
   +span(4)
   +centered
@@ -6,7 +8,7 @@
     padding: 0.65em 1em
     margin-top: 0.25em
   button
-    +span(2 of 4)
+    +full(4)
     float: right
     margin-top: 0.5em
     margin-right: 0
@@ -16,3 +18,7 @@
     display: block
     margin-top: 1em
     margin-bottom: 1em
+
+#recaptcha
+  +full(4)
+  margin-top: 1em

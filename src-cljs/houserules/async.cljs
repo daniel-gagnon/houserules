@@ -2,6 +2,11 @@
   (:require [reagent.core :refer [atom]]))
 
 (def zxcvbn (atom false))
+(def recaptcha (atom true))
 
-(let [zxcvbn-id (atom nil)]
-  (reset! zxcvbn-id (.setInterval js/window #(when (aget js/window "zxcvbn") (.clearInterval js/window @zxcvbn-id) (reset! zxcvbn true)) 100)))
+(defn wait-for [f atm]
+  (let [interval-key (atom nil)]
+    (reset! interval-key (.setInterval js/window #(when (aget js/window f) (.clearInterval js/window @interval-key) (reset! atm true)) 100))))
+
+(wait-for "zxcvbn" zxcvbn)
+;(wait-for "grecaptcha" recaptcha)

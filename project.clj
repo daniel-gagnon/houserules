@@ -76,7 +76,7 @@
     {:source-paths ["src-cljs"],
      :compiler
      {:output-dir "resources/public/js/out",
-      :externs ["react/externs/react.js" "externs/zxcvbn.js"],
+      :externs ["react/externs/react.js" "externs/zxcvbn.js" "externs/recaptcha.js"],
       :optimizations :none,
       :output-to "resources/public/js/app.js",
       :source-map "resources/public/js/out.js.map",
