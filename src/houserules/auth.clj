@@ -4,7 +4,10 @@
             [houserules.database.bdb :refer [db-get]]
             [houserules.settings :refer [owner secret-key]]
             [noir.util.crypt :refer [sha1-sign-hex compare]]
-            [houserules.database.bdb :refer [db-get put]])
+            [houserules.database.bdb :refer [db-get put]]
+            [org.httpkit.client :as http]
+            [clojure.data.json :as json]
+            [houserules.settings :as settings])
   (:import [org.joda.time DateTime]))
 
 (defn logout [] (session/clear!))
@@ -41,3 +44,11 @@
 (defn verify-password [email password]
   (when-let [db-password (:password (db-get email :database :users :default nil))]
     (compare password db-password)))
+
+(defn valid-recaptcha? [response]
+  (-> (str "https://www.google.com/recaptcha/api/siteverify?secret=" @settings/recaptcha-secret "&response=" response)
+      (http/get {:as :text})
+      deref
+      :body
+      json/read-str
+      (get "success")))

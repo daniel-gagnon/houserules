@@ -5,19 +5,18 @@
             [houserules.async :as async]
             [houserules.login :refer [recaptcha-sitekey]]))
 
+(def ^:private recaptcha-validation (atom nil))
+
 (defn send-registration [data email in-flight already-registered?]
   (reset! in-flight true)
   (POST "/auth/register"
-        {:params {:email data}
+        {:params {:email data :recaptcha @recaptcha-validation}
          :handler (fn [response]
                     (reset! in-flight false)
                     (reset! already-registered? (not response))
                     (when-not @already-registered? (reset! email data)))}))
-
-(def ^:private recaptcha-validation (atom nil))
-
 (def recaptcha
-  (with-meta (fn [] [:div#recaptcha]) {:component-did-mount #(.render js/grecaptcha "recaptcha" (js-obj "theme" "light", "sitekey" @recaptcha-sitekey, "callback" (fn [] (reset! recaptcha-validation %))))} ))
+  (with-meta (fn [] [:div#recaptcha]) {:component-did-mount #(.render js/grecaptcha "recaptcha" (js-obj "theme" "light", "sitekey" @recaptcha-sitekey, "callback" (fn [v] (reset! recaptcha-validation v))))} ))
 
 (defn- fill-email [_ _ _]
   (let [data (atom "")]
