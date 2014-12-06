@@ -5,7 +5,8 @@
             [houserules.routes.app :refer [app-page]]
             [noir.response :refer [redirect edn status]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-            [noir.session :as session]))
+            [noir.session :as session]
+            [houserules.settings :refer [recaptcha-sitekey]]))
 
 (defroutes auth-routes
   (POST "/auth/login" [email password]
@@ -38,4 +39,6 @@
           (do
             (email/send-password-reset-email email)
             (edn true))
-          (status 403 (edn false)))))
+          (status 403 (edn false))))
+  (GET "/auth/recaptcha/sitekey" []
+       (edn @recaptcha-sitekey)))

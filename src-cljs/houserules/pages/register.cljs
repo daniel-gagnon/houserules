@@ -2,7 +2,8 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [houserules.ajax :refer [POST]]
             [clojure.string :as string]
-            [houserules.async :as async]))
+            [houserules.async :as async]
+            [houserules.login :refer [recaptcha-sitekey]]))
 
 (defn send-registration [data email in-flight already-registered?]
   (reset! in-flight true)
@@ -16,14 +17,14 @@
 (def ^:private recaptcha-validation (atom nil))
 
 (def recaptcha
-  (with-meta (fn [] [:div#recaptcha]) {:component-did-mount #(.render js/grecaptcha "recaptcha" (js-obj "theme" "light", "sitekey" "6Ld91f4SAAAAAJ7JT7xX2KuTiUs2gQvamJ-K8bDt", "callback" (fn [] (reset! recaptcha-validation %))))} ))
+  (with-meta (fn [] [:div#recaptcha]) {:component-did-mount #(.render js/grecaptcha "recaptcha" (js-obj "theme" "light", "sitekey" @recaptcha-sitekey, "callback" (fn [] (reset! recaptcha-validation %))))} ))
 
 (defn- fill-email [_ _ _]
   (let [data (atom "")]
     (fn [email in-flight already-registered?]
       [:div.ui.form.attached.fluid.segment
        [:input {:type :text :placeholder "e-mail" :auto-focus true :disabled @in-flight :on-change #(reset! data (-> % .-target .-value)) :on-key-down #(when (= 13 (.-keyCode %)) (reset! email @data))}]
-       (when @async/recaptcha [recaptcha])
+       (when (and @async/recaptcha @recaptcha-sitekey) [recaptcha])
        [(if-not (or @in-flight (not (re-find #".+@.+\..+" (string/trim @data))) (not @recaptcha-validation)) :button.ui.primary.button :button.ui.primary.button.disabled) {:disabled (or @in-flight (= (string/trim @data) "")) :on-click #(do (send-registration (string/trim @data) email in-flight already-registered?))} "Register"]])))
 
 (defn- thank-you [email]

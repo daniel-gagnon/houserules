@@ -14,6 +14,10 @@
 
 (def domain (atom nil))
 
+(def recaptcha-secret (atom nil))
+(def recaptcha-sitekey (atom nil))
+
+
 (def secret-key
   (String.
     (if (.exists (clojure.java.io/as-file "secret-key"))
@@ -36,6 +40,8 @@
                        (if (.endsWith d "/")
                          (.subString d 0 (dec (count d)))
                          d)))
+      (reset! recaptcha-secret (get-in data [:recaptcha :secret]))
+      (reset! recaptcha-sitekey (get-in data [:recaptcha :sitekey]))
       true)
     (catch FileNotFoundException _ false)))
 

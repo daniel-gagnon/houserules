@@ -10,6 +10,7 @@
 (def full-name (atom nil))
 (def admin? (atom false))
 (def invalid-token? (atom nil))
+(def recaptcha-sitekey (atom nil))
 
 (defn- register-user [user]
   "Register the user's email and name"
@@ -34,3 +35,7 @@
                 (reset! email (or (:email response) false))
                 (reset! admin? (:admin? response))
                 (reset! invalid-token? (:invalid-token? response))))
+
+(GET "/auth/recaptcha/sitekey"
+     :handler (fn [response]
+                (reset! recaptcha-sitekey response)))

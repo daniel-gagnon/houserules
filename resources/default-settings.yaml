@@ -7,3 +7,6 @@ smtp:
     username: user
     password: password
 domain: http://example.com      # Required creating the links sent by e-mail
+recaptcha:
+    secret: your_recaptcha_secret
+    sitekey: your_recaptcha_sitekey
