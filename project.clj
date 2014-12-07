@@ -10,12 +10,12 @@
    [com.taoensso/tower "3.0.2"]
    [http-kit "2.1.19"]
    [prone "0.6.0"]
-   [noir-exception "0.2.2"]
+   [noir-exception "0.2.3"]
    [com.taoensso/timbre "3.3.1"]
-   [selmer "0.7.2"]
+   [selmer "0.7.7"]
    [cljs-ajax "0.3.3"]
    [lib-noir "0.9.4"]
-   [org.clojure/clojurescript "0.0-2371"]
+   [org.clojure/clojurescript "0.0-2411"]
    [org.clojure/clojure "1.6.0"]
    [environ "1.0.0"]
    [ring-server "0.3.1"]
@@ -23,12 +23,12 @@
    [im.chit/cronj "1.4.3"]
    [org.clojure/data.json "0.2.5"]
    [com.sleepycat/je "6.2.7"]
-   [com.taoensso/nippy "2.7.0"]
+   [com.taoensso/nippy "2.7.1"]
    [slingshot "0.12.1"]
    [org.clojure/tools.trace "0.7.8"]
-   [joda-time/joda-time "2.5"]
+   [joda-time/joda-time "2.6"]
    [clj-yaml "0.4.0"]
-   [markdown-clj "0.9.55" :exclusions [com.keminglabs/cljx]]
+   [markdown-clj "0.9.58" :exclusions [com.keminglabs/cljx]]
    [com.draines/postal "1.11.3"]]
   :repl-options
   {:init-ns houserules.repl}
@@ -64,7 +64,7 @@
    {:cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]}}},
     :dependencies
     [[ring-mock "0.1.5"]
-     [ring/ring-devel "1.3.1"]
+     [ring/ring-devel "1.3.2"]
      [pjstadig/humane-test-output "0.6.0"]],
     :injections
     [(require 'pjstadig.humane-test-output)
