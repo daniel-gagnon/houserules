@@ -18,7 +18,7 @@
 
 (defn- reset-password [email in-flight email-error reset-password-sent]
   (reset! in-flight true)
-  (POST "/reset-password" {:params {:email email}
+  (POST "/password-reset" {:params {:email email}
                            :handler #(reset! reset-password-sent true)
                            :error-handler #(do
                                             (reset! in-flight false)

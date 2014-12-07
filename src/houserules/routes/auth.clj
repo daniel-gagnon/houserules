@@ -36,7 +36,7 @@
        (if (= (verify-token token) :already-registered)
          (redirect "/sign/in")
          (app-page)))
-  (POST "/reset-password" [email]
+  (POST "/password-reset" [email]
         (if (get-user email)
           (do
             (email/send-password-reset-email email)
