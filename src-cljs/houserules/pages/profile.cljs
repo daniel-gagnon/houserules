@@ -11,7 +11,7 @@
   [:div.ui.form
    [:div#picture-chooser
     [:div#picture-placeholder]
-    [:button "Upload a new avatar"]]
+    [:button.ui.secondary.button "Upload a new avatar"]]
    [:div#contact
     (row "Name" [:input {:field :text, :id :name}])
     (row "Home Phone" [:input {:field :text, :id :home-phone}])
