@@ -22,23 +22,22 @@
 (defn get-user [email]
   (db-get email :database :users :default nil))
 
-(defn verify-token [token]
+(defn verify-token [token action]
   (session/clear!)
   (let [[email date hash] (.split token "~")
         valid-hash (sha1-sign-hex secret-key (str email date (:password (get-user email))))]
     (let [user (get-user email)]
       (cond
-        user :already-registered
-
+        (and user (= action :register)) :already-registered
         (and
           (= hash valid-hash)
           (re-seq #"^\d+$" date)
           (>= (Long/parseLong date) (.getMillis (DateTime.))))
         (do
-          (put :users email {})
-          (session/put! :email email)
+          (when (= action :register)
+            (put :users email {})
+            (session/put! :email email))
           :token-valid)
-
         :else (do (session/put! :token-invalid true) :token-invalid)))))
 
 (defn verify-password [email password]
