@@ -19,22 +19,24 @@
 (defn site
   "The whole site"
   []
-  [:div.container
+  [:div
    [top-nav]
-   [messages-area]
-   (if @email
-     (case @current-page
-       :home [:h1 "Home"]
-       :profile [profile]
-       :register-details [register-details]
-       :admin [:h1 "Admin"]
-       nil)
-     (case @current-page
-       :sign-in [sign-in]
-       :register [register]
-       :register-details [register-details]
-       [welcome-message]))
-   [notifications-area]])
+   [:div.container
+    [messages-area]
+    (if @email
+      (case @current-page
+        :home [:h1 "Home"]
+        :profile [profile]
+        :register-details [register-details]
+        :admin [:h1 "Admin"]
+        nil)
+      (case @current-page
+        :sign-in [sign-in]
+        :register [register]
+        :register-details [register-details]
+        [welcome-message]))
+    [notifications-area]]]
+  )
 
 (defn init! []
   (reagent/render-component [site] (.getElementById js/document "app")))
