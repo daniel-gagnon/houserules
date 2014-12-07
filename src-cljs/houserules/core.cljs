@@ -7,7 +7,8 @@
             [houserules.pages.profile :refer [profile]]
             [houserules.pages.register :refer [register]]
             [houserules.pages.sign-in :refer [sign-in]]
-            [houserules.pages.register-details :refer [register-details]]))
+            [houserules.pages.register-details :refer [register-details]]
+            [houserules.widgets.popups :refer [current-popup]]))
 
 (defn welcome-message []
   (when (not (nil? @email))
@@ -20,6 +21,7 @@
   "The whole site"
   []
   [:div
+   (when @current-popup [:div#page-dimmer])
    [top-nav]
    [:div.container
     [messages-area]
