@@ -34,9 +34,9 @@
           (re-seq #"^\d+$" date)
           (>= (Long/parseLong date) (.getMillis (DateTime.))))
         (do
+          (session/put! :email email)
           (when (= action :register)
-            (put :users email {})
-            (session/put! :email email))
+            (put :users email {}))
           :token-valid)
         :else (do (session/put! :token-invalid true) :token-invalid)))))
 

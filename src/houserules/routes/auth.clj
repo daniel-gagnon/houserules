@@ -33,9 +33,12 @@
           (edn false)))
   (GET "/auth/xsrf" [] (edn *anti-forgery-token*))
   (GET "/register/:token" [token]
-       (if (= (verify-token token) :already-registered)
+       (if (= (verify-token token :register) :already-registered)
          (redirect "/sign/in")
          (app-page)))
+  (GET "/password-reset/:token" [token]
+       (verify-token token :reset)
+       (app-page))
   (POST "/password-reset" [email]
         (if (get-user email)
           (do
