@@ -24,7 +24,7 @@
       [:div.ui.form.attached.fluid.segment
        [:input {:type :text :placeholder "e-mail" :auto-focus true :disabled @in-flight :on-change #(reset! data (-> % .-target .-value)) :on-key-down #(when (= 13 (.-keyCode %)) (reset! email @data))}]
        (when (and @async/recaptcha @recaptcha-sitekey) [recaptcha])
-       [(if-not (or @in-flight (not (re-find #".+@.+\..+" (string/trim @data))) (not @recaptcha-validation)) :button.ui.primary.button :button.ui.primary.button.disabled) {:disabled (or @in-flight (= (string/trim @data) "")) :on-click #(do (send-registration (string/trim @data) email in-flight already-registered?))} "Register"]])))
+       [(if-not (or @in-flight (not (re-find #".+@.+\..+" (string/trim @data))) (not @recaptcha-validation)) :button#register-button.ui.primary.button :button#register-button.ui.primary.button.disabled) {:disabled (or @in-flight (= (string/trim @data) "")) :on-click #(do (send-registration (string/trim @data) email in-flight already-registered?))} "Register"]])))
 
 (defn- thank-you [email]
   [:div.ui.form.attached.fluid.segment
