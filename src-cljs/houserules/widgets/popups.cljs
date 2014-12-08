@@ -6,12 +6,11 @@
 (defn- clear-popup [] (reset! current-popup nil))
 
 (defn crop-popup [title img]
-  [:div.ui.active.modal
+  [:div.popup
    [:i.close.icon {:on-click clear-popup}]
    [:div.header title]
    [:div.content
-    [:div.image "Image"]
-    [:div.description "The description"]]
+    [:img {:src "http://placekitten.com/g/500/500"}]]
    [:div.actions
     [:button.ui.button {:on-click clear-popup} "Cancel"]
     [:button.ui.primary.button "Ok"]]])
