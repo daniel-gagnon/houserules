@@ -15,17 +15,19 @@
   (let [zxcvbn-score (js/zxcvbn password (js/Array @full-name @email))]
     (aget zxcvbn-score "score")))
 
-(defn register [password in-flight]
+(defn register [name password in-flight]
   (reset! in-flight true)
+  (reset! full-name @name)
   (PUT "/profiles/update"
-       {:params {:name @full-name :password @password}
+       {:params {:name @name :password @password}
         :handler #(do
                    (reset! in-flight false)
                    (add-notification :success "Registration complete" [:p "Welcome to Houserules!"])
                    (navigate-to (home-route)))}))
 
 (defn register-details []
-  (let [password (atom "")
+  (let [name (atom "")
+        password (atom "")
         strength (atom 0)
         in-flight (atom false)]
     (add-watch password (gensym) (fn [_ _ _ pass]  (reset! strength (compute-strength pass))))
@@ -37,11 +39,11 @@
        [:div.ui.form.attached.fluid.segment
         (if-not @invalid-token?
           [:div.ui.form
-           [:input.ui.input {:type :text :placeholder "Name" :disabled @in-flight :auto-focus true :on-change #(reset! full-name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
+           [:input.ui.input {:type :text :placeholder "Name" :disabled @in-flight :auto-focus true :on-change #(reset! name (let [n (-> % .-target .-value)] (when (not= n "") n)) )}]
            [:input.ui.input {:placeholder "Password" :disabled (or @in-flight (not @async/zxcvbn)) :type :password :on-change #(reset! password (-> % .-target .-value))}]
            [password-strength @strength]
            [:a {:href "http://xkcd.com/936/" :target "_blank"} "Advices for picking a strong and easy to remember password"]
            [(keyword (str "button.ui.primary.button"(when (< @strength 2) ".disabled")))
-            {:disabled (< @strength 2) :on-click #(register password in-flight)}
+            {:disabled (< @strength 2) :on-click #(register name password in-flight)}
             "Complete Registration"]]
           [:p "Please try registering again."])]])))
