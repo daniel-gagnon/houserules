@@ -1,7 +1,8 @@
 (ns houserules.pages.profile
   (:require [reagent.core :as reagent :refer [atom]]
             [houserules.login :refer [full-name]]
-            [reagent-forms.core :as forms]))
+            [reagent-forms.core :as forms]
+            [houserules.widgets.popups :refer [current-popup crop-popup]]))
 
 (defn row [label input]
   [:div.field
@@ -12,7 +13,7 @@
   [:div.ui.form
    [:div#picture-chooser
     [:div#picture-placeholder]
-    [:button.ui.secondary.button "Upload a new avatar"]]
+    [:button.ui.secondary.button {:on-click #(reset! current-popup [crop-popup "Upload a new avatar" nil])} "Upload a new avatar"]]
    [:div#contact
     (row "Name" [:input {:field :text, :id :name}])
     (row "Home Phone" [:input {:field :text, :id :home-phone}])

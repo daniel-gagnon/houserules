@@ -21,7 +21,7 @@
   "The whole site"
   []
   [:div
-   (when @current-popup [:div#page-dimmer])
+   (when @current-popup @current-popup)
    [top-nav]
    [:div.container
     [messages-area]
