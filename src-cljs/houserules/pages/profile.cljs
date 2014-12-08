@@ -12,7 +12,7 @@
 (def profile-form
   [:div.ui.form
    [:div#picture-chooser
-    [:div#picture-placeholder]
+    [:img {:src "http://placekitten.com/g/250/250"}]
     [:button.ui.secondary.button {:on-click #(reset! current-popup [crop-popup "Upload a new avatar" nil])} "Upload a new avatar"]]
    [:div#contact
     (row "Name" [:input {:field :text, :id :name}])
