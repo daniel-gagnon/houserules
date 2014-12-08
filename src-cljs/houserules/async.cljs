@@ -3,6 +3,7 @@
 
 (def zxcvbn (atom false))
 (def recaptcha (atom false))
+(def darkroom (atom false))
 
 (defn wait-for [f atm]
   (let [interval-key (atom nil)]
@@ -10,3 +11,4 @@
 
 (wait-for "zxcvbn" zxcvbn)
 (wait-for "grecaptcha" recaptcha)
+(wait-for "Darkroom" darkroom)

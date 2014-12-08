@@ -5,11 +5,13 @@
       <title>Houserules</title>
       {% if dev %}
         {% style "/static/css/semantic.css" %}
+        {% style "/static/css/darkroom.min.css" %}
         {% style "/static/css/styles.css" %}
       {% else %}
         {% style "/static/css/styles.min.css" %}
       {% endif %}
       <script src="/static/javascript/zxcvbn.js" async></script>
+      <script src="/static/javascript/darkroom.min.js" async></script>
       <script src="https://www.google.com/recaptcha/api.js?render=explicit" async></script>
   </head>
   <body id="app">
