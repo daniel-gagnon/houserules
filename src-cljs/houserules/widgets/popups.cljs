@@ -9,7 +9,7 @@
   [:div.window.ui.stacked.segment
    [:h2.ui.header title]
    [:div.content
-    [:div.placeholder]]
+    [:div.placeholder "Click to upload a picture or drag and drop one here"]]
    [:div.actions
     [:button.ui.primary.button "Ok"]
     [:button.ui.button {:on-click clear-popup} "Cancel"]]])
