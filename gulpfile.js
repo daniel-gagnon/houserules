@@ -39,7 +39,7 @@ gulp.task('watch', ['prefix', 'copy-themes'], function(cb) {
 });
 
 gulp.task('minify', ['prefix'], function() {
-    return gulp.src(['resources/public/css/semantic.css', 'resources/public/css/styles.css'])
+    return gulp.src(['resources/public/css/semantic.css', 'darkroom.min.css', 'resources/public/css/styles.css'])
         .pipe(concat('styles.min.css'))
         .pipe(csso())
         .pipe(gulp.dest('resources/public/css/'));
