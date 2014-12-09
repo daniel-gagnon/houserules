@@ -24,6 +24,14 @@ body, html
   left: 50%
   transform: translate(-50%, -50%)
 
+=clearfix
+  &:before,
+  &:after
+    content: ""
+    display: table
+  &:after
+    clear: both
+
 #page-dimmer
   position: fixed
   left: 0

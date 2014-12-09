@@ -1,3 +1,20 @@
-.popup
+import susy
+
+.window
   z-index: 9000
   +centered
+  
+  background-color: white
+  width: span(5)
+  .placeholder
+    width: 100%
+    height: 66%
+    border-style: dashed
+    border-color: gray
+    border-width: 0.5em
+    border-radius: 1.5em
+    margin-bottom: 1em
+  button
+    float: right
+  .actions
+    +clearfix
