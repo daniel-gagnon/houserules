@@ -9,7 +9,6 @@
 
 (defn crop-popup [title img]
   (let [darkroom (darkroom?)]
-    (println darkroom)
     [:div.window.ui.stacked.segment
      [:h2.ui.header title]
      [:div.content
