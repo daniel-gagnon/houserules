@@ -34,5 +34,5 @@
 (defn darkroom? []
   (when (nil? @darkroom)
     (reset! darkroom false)
-    (async-load ["/static/javascript/fabric.js" "/static/javascript/darkroom.min.js"] darkroom "Darkroom")
-    @darkroom))
+    (async-load ["/static/javascript/fabric.js" "/static/javascript/darkroom.min.js"] darkroom "Darkroom"))
+  @darkroom)
