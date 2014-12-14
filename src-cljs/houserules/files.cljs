@@ -1,19 +1,29 @@
 (ns houserules.files
   (:require [reagent.core :as reagent :refer [atom]]))
 
+(defrecord file [name size type length data])
+
 (def selected-files (atom nil))
-(def image (atom nil))
+(def files (atom nil))
 (defn remove-files [] (reset! selected-files nil))
 
-(def revoke-object-url (-> js/window .-URL .-revokeObjectURL))
-(def create-object-url (-> js/window .-URL .-createObjectURL))
+(defn revoke-objects-urls [objects]
+  (doseq [o objects] ((aget js/window "URL" "revokeObjectURL") o)))
 
-(defn revoke-objects [objects]
-  (doseq [o objects] (revoke-object-url o)))
+(defn create-objects-urls [objects]
+  (->> objects
+       (map (juxt
+              #(aget % "name")
+              #(aget % "size")
+              #(aget % "type")
+              #(aget % "length")
+              (aget js/window "URL" "createObjectURL")))
+       (map #(apply ->file %))))
 
 (add-watch selected-files (gensym)
-  (fn [_ _ old _]
-    (revoke-objects old)))
+  (fn [_ _ old new]
+    (revoke-objects-urls old)
+    (reset! files (create-objects-urls new))))
 
 (defn hidden-file-selector [accept]
   [:input {:type :file
@@ -25,5 +35,15 @@
   (.stopPropagation e)
   (.preventDefault e))
 
+(defn filelist->vector [filelist]
+  (for [idx (range (aget filelist "length"))] ((aget filelist "item") idx)))
+
 (def file-drop-zone
-  {:on-drop #(do (prevent-default %) (reset! selected-files (-> % .-nativeEvent .-dataTransfer .-files ))), :on-drag-enter prevent-default, :on-drag-over prevent-default})
+  {:on-drop #(do (prevent-default %)
+                 (reset! selected-files
+                         (-> % .-nativeEvent
+                             .-dataTransfer
+                             .-files
+                             filelist->vector))),
+   :on-drag-enter prevent-default,
+   :on-drag-over prevent-default})
