@@ -90,5 +90,4 @@
       :pretty-print true}}}}
   :main
   houserules.core
-  :min-lein-version "2.0.0"
-  :core.typed {:check [houserules.database.bdb]})
+  :min-lein-version "2.0.0")
