@@ -1,4 +1,5 @@
 (ns houserules.repl
+  (:require [houserules.dev :refer [browser-repl start-figwheel]])
   (:use houserules.handler
         ring.server.standalone
         [ring.middleware file-info file]))

@@ -36,7 +36,8 @@
    [org.clojure/clojurescript "0.0-2371" :scope "provided"]
    [com.cemerick/piggieback "0.1.3"]
    [weasel "0.4.0-SNAPSHOT"]
-   [figwheel "0.1.5-SNAPSHOT"]]
+   [figwheel "0.1.5-SNAPSHOT"]
+   [leiningen "2.5.0"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts
@@ -51,32 +52,38 @@
   {:handler houserules.handler/app,
    :init houserules.handler/init,
    :destroy houserules.handler/destroy}
-  :profiles
-  {:uberjar
-   {:cljsbuild
-    {:jar true,
-     :builds
-     {:app
-      {:source-paths ["env/prod/cljs"],
-       :compiler {:optimizations :advanced, :pretty-print false}}}},
-    :hooks [leiningen.cljsbuild],
-    :omit-source true,
-    :env {:production true},
-    :aot :all},
-   :production
-   {:ring
-    {:open-browser? false, :stacktraces? false, :auto-reload? false}
-    :global-vars {*assert* false}},
-   :dev
-   {:cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]}}},
-    :dependencies
-    [[ring-mock "0.1.5"]
-     [ring/ring-devel "1.3.2"]
-     [pjstadig/humane-test-output "0.6.0"]],
-    :injections
-    [(require 'pjstadig.humane-test-output)
-     (pjstadig.humane-test-output/activate!)],
-    :env {:dev true}}}
+  :profiles {:dev {:repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+
+                   :dependencies [[ring-mock "0.1.5"]
+                                  [ring/ring-devel "1.3.1"]
+                                  [pjstadig/humane-test-output "0.6.0"]]
+
+                   :plugins [[lein-figwheel "0.1.4-SNAPSHOT"]]
+
+                   :injections [(require 'pjstadig.humane-test-output)
+                                (pjstadig.humane-test-output/activate!)]
+
+                   :figwheel {:http-server-root "public"
+                              :server-port 3449
+                              :css-dirs ["resources/public/css"]}
+
+                   :env {:dev? true}
+
+                   :cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]}}}}
+
+             :uberjar {:env {:production true}
+                       :aot :all
+                       :omit-source true
+                       :cljsbuild {:jar true
+                                   :builds {:app
+                                            {:source-paths ["env/prod/cljs"]
+                                             :compiler
+                                                           {:optimizations :advanced
+                                                            :pretty-print false}}}}}
+
+             :production {:ring {:open-browser? false
+                                 :stacktraces?  false
+                                 :auto-reload?  false}}}
   :cljsbuild
   {:builds
    {:app
