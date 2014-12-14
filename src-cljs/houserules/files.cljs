@@ -2,7 +2,18 @@
   (:require [reagent.core :as reagent :refer [atom]]))
 
 (def selected-files (atom nil))
+(def image (atom nil))
 (defn remove-files [] (reset! selected-files nil))
+
+(def revoke-object-url (-> js/window .-URL .-revokeObjectURL))
+(def create-object-url (-> js/window .-URL .-createObjectURL))
+
+(defn revoke-objects [objects]
+  (doseq [o objects] (revoke-object-url o)))
+
+(add-watch selected-files (gensym)
+  (fn [_ _ old _]
+    (revoke-objects old)))
 
 (defn hidden-file-selector [accept]
   [:input {:type :file
