@@ -7,7 +7,8 @@
   "http://example.com/FIXME"
   :source-paths ["src/clj" "src/cljs"]
   :dependencies
-  [[reagent-forms "0.2.6"]
+  [[reagent "0.4.3"]
+   [reagent-forms "0.2.6"]
    [com.taoensso/tower "3.0.2"]
    [http-kit "2.1.19"]
    [prone "0.6.0"]
@@ -30,7 +31,12 @@
    [joda-time/joda-time "2.6"]
    [clj-yaml "0.4.0"]
    [markdown-clj "0.9.58" :exclusions [com.keminglabs/cljx]]
-   [com.draines/postal "1.11.3"]]
+   [com.draines/postal "1.11.3"]
+   [reagent-utils "0.1.0"]
+   [org.clojure/clojurescript "0.0-2371" :scope "provided"]
+   [com.cemerick/piggieback "0.1.3"]
+   [weasel "0.4.0-SNAPSHOT"]
+   [figwheel "0.1.5-SNAPSHOT"]]
   :repl-options
   {:init-ns houserules.repl}
   :jvm-opts
