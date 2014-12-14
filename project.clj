@@ -5,6 +5,7 @@
   "FIXME: write description"
   :url
   "http://example.com/FIXME"
+  :source-paths ["src/clj" "src/cljs"]
   :dependencies
   [[reagent-forms "0.2.6"]
    [com.taoensso/tower "3.0.2"]
@@ -73,7 +74,7 @@
   :cljsbuild
   {:builds
    {:app
-    {:source-paths ["src-cljs"],
+    {:source-paths ["src/cljs"],
      :compiler
      {:output-dir "resources/public/js/out",
       :externs ["react/externs/react.js" "externs/zxcvbn.js" "externs/recaptcha.js"],
