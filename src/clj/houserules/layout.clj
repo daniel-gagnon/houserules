@@ -18,7 +18,7 @@
         (assoc
           params
           :dev
-          (env :dev)
+          (env :dev?)
           :servlet-context
           (if-let [context (:servlet-context request)]
             (try

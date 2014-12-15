@@ -39,7 +39,7 @@
     [:shared-appender-config :rotor]
     {:path "houserules.log" :max-size (* 512 1024) :backlog 10})
 
-  (if (env :dev) (parser/cache-off!))
+  (if (env :dev?) (parser/cache-off!))
 
   (when-not (settings/read-settings)
     (println "E-mail settings could not be found. You won't be able to create your admin account without valid e-mail settings.")
@@ -50,7 +50,7 @@
   (migrate)
 
   (timbre/info "\n-=[ houserules started successfully"
-               (when (env :dev) "using the development profile") "]=-"))
+               (when (env :dev?) "using the development profile") "]=-"))
 
 (defn destroy
   "destroy will be called when your application

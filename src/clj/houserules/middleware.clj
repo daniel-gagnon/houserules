@@ -19,5 +19,5 @@
   [#(wrap-internal-error % :log (fn [e] (timbre/error e)))])
 
 (defn load-middleware []
-  (concat (when (env :dev) development-middleware)
+  (concat (when (env :dev?) development-middleware)
           production-middleware))
