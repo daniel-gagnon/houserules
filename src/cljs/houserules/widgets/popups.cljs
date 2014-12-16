@@ -1,6 +1,6 @@
 (ns houserules.widgets.popups
   (:require [reagent.core :as reagent :refer [atom]]
-            [houserules.files :refer [hidden-file-selector file-drop-zone remove-files files]]
+            [houserules.files :refer [hidden-file-selector file-drop-zone remove-files files file]]
             [houserules.async :refer [darkroom?]]))
 
 (def current-popup (atom nil))
@@ -8,7 +8,9 @@
 (defn- clear-popup [] (reset! current-popup nil))
 
 (defn crop-popup [title img]
-  (let [first-file-is-image #(re-find #"image/.*" (or (:type (first @files)) ""))]
+  (let [first-file (first @files)
+        first-file-loaded (and (not (nil? first-file)) (= (type @first-file) file))
+        first-file-is-image #(and first-file-loaded (re-find #"image/.*" (:type @first-file)))]
     [:div.window.ui.stacked.segment
      [:h2.ui.header title]
      [:div.content
