@@ -33,3 +33,7 @@
 (defn stop-server []
   (.stop @server)
   (reset! server nil))
+
+(defn start-both []
+  (future (start-server))
+  (future (start-figwheel)))
