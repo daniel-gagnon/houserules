@@ -32,7 +32,7 @@
    [clj-yaml "0.4.0"]
    [markdown-clj "0.9.58" :exclusions [com.keminglabs/cljx]]
    [com.draines/postal "1.11.3"]
-   [reagent-utils "0.1.2"]
+   [reagent-utils "0.1.1"]
    [org.clojure/clojurescript "0.0-2371" :scope "provided"]
    [com.cemerick/piggieback "0.1.3"]
    [weasel "0.4.0-SNAPSHOT"]
