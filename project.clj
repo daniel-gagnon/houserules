@@ -58,7 +58,7 @@
                                   [ring/ring-devel "1.3.2"]
                                   [pjstadig/humane-test-output "0.6.0"]]
 
-                   :plugins [[lein-figwheel "0.2.1-SNAPSHOT" :exclusions [org.clojure/clojure org.clojure/clojure org.clojure/clojurescript]]]
+                   :plugins [[lein-figwheel "0.2.3-SNAPSHOT" :exclusions [org.clojure/clojure org.clojure/clojure org.clojure/clojurescript]]]
 
                    :injections [(require 'pjstadig.humane-test-output)
                                 (pjstadig.humane-test-output/activate!)]
